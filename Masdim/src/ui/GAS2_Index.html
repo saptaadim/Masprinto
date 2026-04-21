@@ -1,0 +1,1219 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <base target="_top">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Form Order Masprinto</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+
+    <?!= include('ui/Global_Style'); ?>
+    <?!= include('ui/Global_Script'); ?>
+</head>
+
+<body class="scroll-layout">
+    <div id="toast-wrap"></div>
+
+    <div class="container" id="main-container">
+
+        <div id="system-loading">
+            <div class="spinner"></div>
+            <h3 style="margin:0; font-size: 18px; color: var(--text);" id="loading-title">Loading ...</h3>
+            <p id="loading-desc" style="font-size: 13px; color: var(--text-light); margin-top: 10px; font-weight: 500;">Mohon tunggu sebentar...</p>
+        </div>
+
+        <h1>Order Masprinto</h1>
+
+        <div class="progress-wrapper">
+            <div class="progress-line"></div>
+            <div class="progress-line-fill" id="progress-fill" style="width: 0%;"></div>
+            <div class="progress-bar">
+                <div class="dot active">1<span class="dot-label">Klien</span></div>
+                <div class="dot">2<span class="dot-label">Produk</span></div>
+                <div class="dot">3<span class="dot-label">Desain</span></div>
+                <div class="dot">4<span class="dot-label">Kirim</span></div>
+                <div class="dot">5<span class="dot-label">Bayar</span></div>
+            </div>
+        </div>
+
+        <form id="orderForm">
+
+            <div class="step active" id="step1">
+                <h2><i class="fa-solid fa-user"></i> 1. Informasi Klien & Brand (Wajib)</h2>
+                <div class="info-box info-blue"><i class="fa-solid fa-circle-info"></i> Mohon isi identitas dengan
+                    benar. Data ini digunakan untuk database
+                    resi dan pengiriman invoice.</div>
+
+                <div class="form-group"><label>Nama Bisnis / Brand *</label>
+                    <input type="text" id="nama" placeholder="Contoh: Streetwear Co." required>
+                    <small style="color:var(--text-light); font-size:11px;">Nama brand Anda yang akan muncul di
+                        label/invoice.</small>
+                </div>
+                <div class="form-group"><label>Nomor WhatsApp Aktif *</label>
+                    <input type="number" id="wa" placeholder="Contoh: 081234567890" required>
+                    <small style="color:var(--text-light); font-size:11px;">Gunakan nomor aktif untuk koordinasi
+                        produksi.</small>
+                </div>
+                <div class="form-group"><label>Email Invoice *</label>
+                    <input type="email" id="email" placeholder="Contoh: admin@brand.com" required>
+                    <small style="color:var(--text-light); font-size:11px;">Invoice otomatis akan dikirim ke email
+                        ini.</small>
+                </div>
+
+                <div class="btn-nav"><button type="button" onclick="nextStep(2)">Lanjut Pilih Produk &raquo;</button>
+                </div>
+            </div>
+
+            <div class="step" id="step2">
+                <h2><i class="fa-solid fa-shirt"></i> 2. Spesifikasi Produk</h2>
+
+                <div class="customizer-banner" id="customizer-preview-box"
+                    style="display: none; background: #ecfdf5; border: 1.5px solid #10b981; padding: 15px; border-radius: 8px; text-align: center; margin-bottom: 20px;">
+                    <h3
+                        style="margin: 0; color: #059669; font-size: 15px; display: flex; align-items: center; justify-content: center; gap: 8px;">
+                        <i class="fa-solid fa-circle-check"></i> Desain Terhubung
+                    </h3>
+                    <p style="font-size: 12px; color: #475569; margin: 8px 0 15px 0;">
+                        Aset file asli & mockup Anda telah diamankan di brankas Drive kami.
+                    </p>
+                    <a id="btn-lihat-drive" href="#" target="_blank"
+                        style="display: inline-block; background: #10b981; color: white; padding: 8px 16px; border-radius: 6px; text-decoration: none; font-size: 13px; font-weight: bold; transition: 0.2s;">
+                        <i class="fa-solid fa-folder-open"></i> Buka Folder Desain
+                    </a>
+                </div>
+
+                <div class="price-preview" id="live-price-box"><em>Memuat estimasi harga...</em></div>
+
+                <div class="flex-row">
+                    <div class="form-group flex-1"><label>Cotton Combed</label>
+                        <select id="kain" onchange="updatePricePreview()">
+                            <option value="30s">30s</option>
+                            <option value="24s">24s</option>
+                            <option value="20s">20s</option>
+                        </select>
+                    </div>
+                    <div class="form-group flex-1"><label>Ukuran (Size)</label>
+                        <select id="size" onchange="updatePricePreview()">
+                            <option value="S">S</option>
+                            <option value="M">M</option>
+                            <option value="L">L</option>
+                            <option value="XL">XL</option>
+                            <option value="XXL">XXL</option>
+                            <option value="XXXL">XXXL</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="flex-row">
+                    <div class="form-group flex-1"><label>Jenis Lengan</label>
+                        <select id="lengan" onchange="updatePricePreview()">
+                            <option value="Pendek">Lengan Pendek</option>
+                            <option value="Panjang">Lengan Panjang</option>
+                        </select>
+                    </div>
+                    <div class="form-group flex-1"><label>Warna Kaos</label>
+                        <select id="warna" onchange="toggleWarnaPO(); updatePricePreview();">
+                            <option value="Hitam">Hitam</option>
+                            <option value="Putih">Putih</option>
+                            <option value="Navy">Navy</option>
+                            <option value="Lainnya (PO)">Warna Lainnya (PO)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group" id="box-warna-po" style="display: none;">
+                    <label>Tulis Request Warna (Pre-Order):</label>
+                    <input type="text" id="warnaPO" placeholder="Contoh: Maroon, Hijau Botol..."
+                        oninput="updatePricePreview()">
+                </div>
+
+                <div id="sablon-wrapper">
+                    <div class="form-group"
+                        style="background: #eff6ff; border: 1.5px dashed var(--primary); padding: 15px; border-radius: 8px; margin-bottom: 20px;">
+                        <label style="color: var(--primary);"><i class="fa-solid fa-bolt"></i> Kode Sablon
+                            Pintar</label>
+                        <input type="text" id="kodeSablon" placeholder="Contoh: MSP-DPN[A4]-BLK[Logo]"
+                            oninput="updatePricePreview()" style="border-color: var(--primary);">
+                        <small style="color:var(--primary); font-size:11px; opacity:0.8;">Tempel kode dari Masprinto
+                            Studio untuk integrasi desain otomatis.</small>
+                        <div id="breakdown-kode"
+                            style="margin-top: 10px; font-size: 13px; line-height: 1.5; color: #1e3a8a;"></div>
+                    </div>
+
+                    <div class="form-group" id="manual-sablon-box"
+                        style="background:white; padding:15px; border:1px solid var(--border); border-radius:8px;">
+                        <label style="margin-bottom: 12px; font-weight:700;">Atau Tambah Area Sablon Manual:</label>
+                        <div
+                            style="display: flex; gap: 8px; margin-bottom: 15px; align-items: flex-end; flex-wrap: wrap;">
+                            <div style="flex: 1; min-width: 100px;">
+                                <label style="font-size: 12px; margin-bottom: 4px;">Sisi</label>
+                                <select id="temp-sisi" style="padding: 10px;">
+                                    <option value="Depan">Depan</option>
+                                    <option value="Belakang">Belakang</option>
+                                    <option value="Neck">Neck</option>
+                                    <option value="Lengan Kanan">Lengan Kanan</option>
+                                    <option value="Lengan Kiri">Lengan Kiri</option>
+                                </select>
+                            </div>
+                            <div style="flex: 1; min-width: 100px;">
+                                <label style="font-size: 12px; margin-bottom: 4px;">Area/Ukuran</label>
+                                <select id="temp-area" style="padding: 10px;">
+                                    <option value="Logo">Logo</option>
+                                    <option value="A4">A4</option>
+                                    <option value="A3">A3</option>
+                                    <option value="NECKLABEL">Neck Label</option>
+                                    <option value="LENGAN">Lengan</option>
+                                </select>
+                            </div>
+                            <div style="width: 70px;">
+                                <label style="font-size: 12px; margin-bottom: 4px;">Qty</label>
+                                <input type="number" id="temp-qty" min="1" value="1"
+                                    style="padding: 10px; text-align: center;">
+                            </div>
+                            <button type="button" class="btn-add" onclick="addTempSablon()"
+                                title="Tambah Area">+</button>
+                        </div>
+                        <div id="temp-sablon-list" style="display: flex; flex-direction: column; gap: 8px;"></div>
+                    </div>
+                </div>
+
+                <label>Quantity Pesanan Kaos (pcs)</label>
+                <input type="number" id="qty" min="1" value="1" placeholder="Contoh: 12"
+                    onchange="updatePricePreview(); resetOngkir();" onkeyup="updatePricePreview(); resetOngkir();">
+                <small style="color:var(--text-light); font-size:11px;">Total jumlah kaos yang ingin dipesan.</small>
+
+                <button type="button" class="btn-cart" onclick="addToCart()">+ Masukkan Keranjang</button>
+
+                <div class="cart-box">
+                    <label
+                        style="font-size: 16px; margin-bottom: 10px; border-bottom: 1px solid var(--border); padding-bottom: 8px;"><i
+                            class="fa-solid fa-cart-shopping"></i>
+                        Isi Keranjang Belanja:</label>
+                    <div id="cart-list">Belum ada barang di keranjang.</div>
+                    <div class="total-display">Total: Rp <span id="total-cart">0</span></div>
+                </div>
+
+                <div class="btn-nav">
+                    <button type="button" class="btn-secondary" onclick="nextStep(1)">Kembali</button>
+                    <button type="button" onclick="nextStep(3)">Lanjut ke Desain &raquo;</button>
+                </div>
+            </div>
+
+            <div class="step" id="step3">
+                <h2><i class="fa-solid fa-palette"></i> 3. File Desain & Mockup</h2>
+
+                <div id="step3-customizer" style="display: none; text-align: center; padding: 30px 10px;">
+                    <div style="font-size: 40px; margin-bottom: 15px;"><i class="fa-solid fa-cloud-arrow-up"></i></div>
+                    <h3 style="color: var(--primary); margin-bottom: 10px;">Desain Anda Tersimpan Aman</h3>
+                    <p style="color: var(--text-light); font-size: 14px; line-height: 1.6;">Sistem kami telah
+                        mengamankan File HD Asli dan File Mockup dari Customizer Anda. Anda tidak perlu mengunggah ulang
+                        apapun di sini.</p>
+                </div>
+
+                <div id="step3-manual">
+                    <div class="info-box info-blue">
+                        <span><strong>Syarat File Cetak (SLA):</strong> Resolusi minimal 300dpi, format PNG
+                            (Transparan).</span>
+                        <a href="https://masprinto.blogspot.com/2026/04/sistem-kerja-jelas-dengan-sla.html"
+                            target="_blank">
+                            <i class="fa-solid fa-file-lines"></i> Baca Panduan Resolusi & Petunjuk File
+                        </a>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Unggah Desain HD (Bisa pilih beberapa file):</label>
+                        <input type="file" id="desain" accept="image/png, application/pdf" multiple>
+                    </div>
+
+                    <div class="info-box info-yellow">
+                        <span><i class="fa-solid fa-triangle-exclamation"></i> <strong>Perhatian:</strong> Tolong
+                            periksa link desain mockup kami. Kami hanya
+                            memproses pesanan yang menggunakan <strong>Mockup Official</strong> kami untuk keakuratan
+                            posisi cetak.</span>
+                        <a href="https://masprinto.blogspot.com/p/mockup-kaos-masprinto.html" target="_blank"><i
+                                class="fa-solid fa-download"></i> Download Mockup Official Kami</a>
+                        Download Mockup Official Kami</a>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Unggah Mockup Penempatan (Bisa pilih beberapa file):</label>
+                        <input type="file" id="mockup" accept="image/png, image/jpeg, application/pdf" multiple>
+                    </div>
+
+                    <div class="form-group"
+                        style="margin-top: 25px; background: #fffbeb; border: 1px solid #fef08a; padding: 15px; border-radius: 8px;">
+                        <label style="display: flex; gap: 10px; cursor: pointer; align-items: flex-start; margin: 0;">
+                            <input type="checkbox" id="sla-agree" style="width: 20px; height: 20px; margin-top: 2px;">
+                            <span style="font-size: 13px; font-weight: 500; line-height: 1.5; color: #92400e;">Saya
+                                telah membaca dan menyetujui SLA, serta menyatakan bahwa desain ini adalah <strong>karya
+                                    orisinal</strong>. Saya membebaskan vendor dari segala tuntutan hukum terkait
+                                pelanggaran hak cipta.</span>
+                        </label>
+                    </div>
+                </div>
+                <div class="form-group" style="margin-top: 20px;">
+                    <label>Catatan / Instruksi Khusus (Opsional):</label>
+                    <textarea id="instruksi" rows="2"
+                        placeholder="Contoh: Posisi sablon dada tengah, jarak 3 jari dari kerah."></textarea>
+                </div>
+
+                <div class="btn-nav">
+                    <button type="button" class="btn-secondary" onclick="nextStep(2)">Kembali</button>
+                    <button type="button" onclick="nextStep(4)">Lanjut Pengiriman &raquo;</button>
+                </div>
+            </div>
+
+            <div class="step" id="step4">
+                <h2><i class="fa-solid fa-truck-fast"></i> 4. Detail Pengiriman</h2>
+
+                <div
+                    style="background: #f8fafc; padding: 12px; border-radius: 8px; border: 1px solid var(--border); margin-bottom: 20px; display: flex; flex-direction: column; gap: 15px;">
+
+                    <label style="display: flex; align-items: center; gap: 10px; cursor: pointer; margin: 0;">
+                        <input type="checkbox" id="is-dropship" onchange="toggleRecipientFields()"
+                            style="width: 18px; height: 18px;">
+                        <span style="font-weight: 600; color: var(--primary);">Kirim ke Orang Lain (Dropship)</span>
+                    </label>
+
+                    <div style="border-top: 1px solid var(--border); padding-top: 10px;">
+                        <label style="font-weight: 600; color: #059669; margin-bottom: 8px; display: block;">Model
+                            Pesanan:</label>
+                        <div style="display: flex; gap: 15px;">
+                            <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+                                <input type="radio" name="shipping-mode" value="regular" checked
+                                    onchange="toggleShippingMode()">
+                                <span style="font-size: 14px;">Reguler (Hitung Ongkir)</span>
+                            </label>
+                            <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+                                <input type="radio" name="shipping-mode" value="marketplace"
+                                    onchange="toggleShippingMode()">
+                                <span style="font-size: 14px;">Marketplace (Unggah Resi)</span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="recipient-fields" style="display: none; animation: slideUp 0.3s ease;">
+                    <div class="form-group">
+                        <label>Nama Penerima Paket:</label>
+                        <input type="text" id="nama-penerima" placeholder="Contoh: Bpk. Wawan">
+                        <small style="color:var(--text-light); font-size:11px;">Nama orang yang akan menerima
+                            paket.</small>
+                    </div>
+                    <div class="form-group">
+                        <label>No. WA Penerima:</label>
+                        <input type="number" id="hp-penerima" placeholder="Contoh: 085712345678">
+                        <small style="color:var(--text-light); font-size:11px;">Nomor telepon penerima untuk
+                            kurir.</small>
+                    </div>
+                    <hr style="border: 0; border-top: 1px dashed var(--border); margin: 20px 0;">
+                </div>
+
+                <div id="section-alamat-pengiriman">
+                    <div class="form-group">
+                        <label>Alamat Lengkap Pengiriman:</label>
+                        <textarea id="alamat" rows="2" placeholder="Contoh: Jl. Merdeka No. 123, RT 01 RW 02, Kec. Genteng"
+                            onchange="resetOngkir()" required></textarea>
+                        <small style="color:var(--text-light); font-size:11px;">Sertakan detail seperti nomor rumah, RT/RW,
+                            atau patokan terdekat.</small>
+                    </div>
+    
+                    <div class="form-group">
+                        <label>Provinsi:</label>
+                        <select id="provinsi" onchange="onProvinsiChange()" required>
+                            <option value="">-- Pilih Provinsi --</option>
+                        </select>
+                    </div>
+    
+                    <div class="flex-row">
+                        <div class="form-group flex-1">
+                            <label>Kabupaten / Kota:</label>
+                            <select id="kabupaten" onchange="onKabupatenChange()" required disabled>
+                                <option value="">-- Pilih Kota/Kab --</option>
+                            </select>
+                            <small style="color:var(--text-light); font-size:11px;">Pilih nama kota tujuan.</small>
+                        </div>
+                        <div class="form-group flex-1">
+                            <label>Kecamatan:</label>
+                            <select id="kecamatan" onchange="resetOngkir()" required disabled>
+                                <option value="">-- Pilih Kecamatan --</option>
+                            </select>
+                            <small style="color:var(--text-light); font-size:11px;">Pilih kecamatan sesuai kota.</small>
+                        </div>
+                    </div>
+    
+                    <div class="flex-row">
+                        <div class="form-group flex-1"><label>Kode POS:</label>
+                            <input type="number" id="kodepos" placeholder="Contoh: 60123">
+                            <small style="color:var(--text-light); font-size:11px;">5 digit kode pos alamat tujuan.</small>
+                        </div>
+                        <div class="form-group flex-1" id="box-kurir-reguler">
+                            <label>Kurir:</label>
+                            <select id="kurir">
+                                <option value="JNT">JNT</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group" id="box-kurir-manual" style="display:none;">
+                    <label>Nama Kurir (Manual) *</label>
+                    <input type="text" id="kurir-manual" placeholder="Contoh: Shopee Express / J&T / Lazada">
+                    <small style="color:var(--text-light); font-size:11px;">Tulis nama kurir yang tertera di label marketplace Anda.</small>
+                </div>
+
+                <div id="section-ongkir-reguler">
+                    <button type="button" style="width: 100%;" onclick="cekOngkir()"><i
+                            class="fa-solid fa-location-dot"></i> Hitung Ongkir</button>
+                    <div style="margin-top: 10px; font-size: 14px;">Biaya Kirim: <strong>Rp <span
+                                id="ongkir-display">0</span></strong></div>
+                </div>
+
+                <div id="section-resi-marketplace"
+                    style="display: none; background: #ecfdf5; border: 1px solid #10b981; padding: 15px; border-radius: 8px; margin-top: 10px;">
+                    <label style="color: #065f46; font-weight: bold; margin-bottom: 8px; display: block;">
+                        <i class="fa-solid fa-file-arrow-up"></i> Unggah Resi/Label Marketplace:
+                    </label>
+                    <input type="file" id="resi-marketplace" accept="image/*, application/pdf">
+                    <small style="color: #065f46; font-size: 11px; margin-top: 5px; display: block;">
+                        *Ongkir Otomatis Rp 0. Kami akan mencetak label yang Anda unggah.
+                    </small>
+                </div>
+
+                <div class="btn-nav">
+                    <button type="button" class="btn-secondary" onclick="nextStep(3)">Kembali</button>
+                    <button type="button" onclick="nextStep(5)">Lanjut Pembayaran &raquo;</button>
+                </div>
+            </div>
+
+            <div class="step" id="step5">
+                <h2><i class="fa-solid fa-credit-card"></i> 5. Pembayaran & Konfirmasi</h2>
+
+                <div class="cart-box" style="background: #f8fafc; border: 1px dashed var(--primary);">
+                    <h3
+                        style="margin-top:0; font-size:15px; color: var(--primary); border-bottom: 2px solid var(--border); padding-bottom: 10px; display:flex; align-items:center; gap:8px;">
+                        <i class="fa-solid fa-clipboard-list"></i> Deskripsi Pesanan Anda
+                    </h3>
+
+                    <div id="review-cart-list" style="margin-bottom: 15px; font-size: 13px;"></div>
+
+                    <div style="display:flex; justify-content:space-between; margin-bottom:8px;"><span>Total
+                            Produk:</span> <strong>Rp <span id="final-belanja">0</span></strong></div>
+                    <div
+                        style="display:flex; justify-content:space-between; margin-bottom:15px; border-bottom: 1px solid var(--border); padding-bottom:15px;">
+                        <span>Ongkos Kirim:</span> <strong>Rp <span id="final-ongkir">0</span></strong>
+                    </div>
+                    <div style="display:flex; justify-content:space-between; font-size:18px; color: var(--primary);">
+                        <span>Grand Total:</span> <strong>Rp <span id="grand-total">0</span></strong>
+                    </div>
+                </div>
+
+                <div class="info-box info-yellow" style="border: 2px solid var(--warning); padding: 15px;">
+                    <strong style="color: var(--danger); font-size: 14px;"><i
+                            class="fa-solid fa-triangle-exclamation"></i> PERHATIAN PENTING:</strong>
+                    <p style="margin: 5px 0; font-size: 13px; line-height: 1.5;">
+                        Pastikan setelah membayar Anda <strong>kembali ke halaman ini</strong> untuk melakukan
+                        konfirmasi pembayaran.
+                        Jika Anda kehilangan detail order (tab tertutup), maka Anda harus <strong>mengisi mulai dari
+                            awal</strong>.
+                    </p>
+                    <p style="margin: 5px 0; font-size: 13px; font-weight: bold; color: #000;">
+                        Setelah unggah bukti pembayaran, Anda WAJIB klik tombol "Konfirmasi & Proses Pesanan" di bawah!
+                    </p>
+                </div>
+
+                <div class="form-group">
+                    <label>Metode Pembayaran:</label>
+                    <select id="metodeBayar" onchange="togglePayment()">
+                        <option value="">-- Pilih Metode --</option>
+                        <option value="QRIS">QRIS Otomatis</option>
+                        <option value="Transfer Bank">Transfer Bank Manual</option>
+                    </select>
+                </div>
+
+                <div id="payment-info" class="info-box info-blue" style="display: none; text-align: center;">
+                    <div id="info-bank" style="display: none;">Mohon transfer sesuai Grand Total ke:<br><strong
+                            style="font-size:16px;">Bank JAGO - 102045214351</strong><br>A/n Dimas Yuda Saputra</div>
+                    <div id="info-qris" style="display: none;">Unduh Barcode QRIS dibawah ini dengan klik dan pilih
+                        <strong>Unduh Gambar</strong><br><img src="https://i.imgur.com/g2ORh66.jpeg" alt="QRIS"
+                            width="180" style="margin-top:10px; border-radius: 8px;">
+                    </div>
+                </div>
+
+                <div class="form-group" style="margin-top: 20px;">
+                    <label>Unggah Bukti Transfer:</label>
+                    <input type="file" id="bukti" accept="image/*" required>
+                </div>
+
+                <div class="btn-nav">
+                    <button type="button" class="btn-secondary" onclick="nextStep(4)">Kembali</button>
+                    <button type="button" id="btn-submit" onclick="submitFinal()"
+                        style="background: var(--success);">KONFIRMASI & PROSES PESANAN</button>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <!-- Data dari Server (JSON Safe Injection) -->
+    <div id="server-data-json" style="display:none;">
+        <?!= JSON.stringify({ idOrder: idOrder, baseUrl: baseUrl, token: (typeof token !== 'undefined' ? token : ''), sessionToken: (typeof sessionToken !== 'undefined' ? sessionToken : '') }) ?>
+    </div>
+
+    <script>
+        const serverData = JSON.parse(document.getElementById('server-data-json').textContent);
+        const currentIdOrder = serverData.idOrder;
+        const BASE_URL = serverData.baseUrl;
+        const TOKEN = serverData.token;
+        const SESSION_TOKEN = serverData.sessionToken;
+        const RETURN_TO = new URLSearchParams(window.location.search).get('returnTo') || "";
+
+        let dashboardData = null;
+        let urlParams = { ref: "", code: "" };
+
+        let dbPrice = null;
+        let cartItems = [];
+        let tarifOngkir = 0;
+        let totalBelanja = 0;
+        let tempSablonAreasList = [];
+        let dbWilayah = null;
+        let ACTIVE_SESSION_TOKEN = SESSION_TOKEN || "";
+        
+        function showLoading(title, desc) {
+            document.getElementById('system-loading').style.display = 'flex';
+            document.getElementById('loading-title').innerText = title || 'Loading ...';
+            const d = document.getElementById('loading-desc');
+            if (d) {
+                d.style.display = 'block';
+                d.innerText = desc || 'Mohon tunggu sebentar...';
+            }
+        }
+        function hideLoading() {
+            document.getElementById('system-loading').style.display = 'none';
+        }
+        window.alert = window.masprintoAlert;
+
+        window.onload = function () {
+            if (TOKEN) {
+                google.script.run.withSuccessHandler(function (m) {
+                    if (m) {
+                        document.getElementById('nama').value = m.namaToko || "";
+                        document.getElementById('wa').value = m.wa || "";
+                        document.getElementById('email').value = m.email || "";
+                    }
+                    const step1 = document.getElementById('step1');
+                    if (step1) step1.style.display = 'none';
+                    nextStep(2);
+                }).getMitraByToken(TOKEN);
+            }
+            // CEK JALUR: Apakah pelanggan datang bawa ID dari Customizer?
+            if (currentIdOrder) {
+                showLoading('Loading...', 'Menyinkronkan aset desain Anda.');
+
+                google.script.run.withSuccessHandler(function (data) {
+                    if (data) {
+                        urlParams.ref = data.folderId;
+                        urlParams.code = data.kodeSablon;
+                        urlParams.folderUrl = data.folderUrl || "";
+                        urlParams.idDesain = currentIdOrder || "";
+
+                        let inputKode = document.getElementById('kodeSablon');
+                        inputKode.value = urlParams.code;
+                        inputKode.readOnly = true;
+                        inputKode.style.backgroundColor = "#e2e8f0";
+                        document.getElementById('manual-sablon-box').style.display = 'none';
+
+                        document.getElementById('customizer-preview-box').style.display = 'block';
+                        document.getElementById('btn-lihat-drive').href = "https://drive.google.com/drive/folders/" + urlParams.ref;
+
+                        document.getElementById('step3-manual').style.display = 'none';
+                        document.getElementById('step3-customizer').style.display = 'block';
+                    } else {
+                        alert("Maaf, ID Pesanan (" + currentIdOrder + ") tidak ditemukan di database Studio kami.");
+                    }
+                    loadSistemDasar();
+                }).withFailureHandler(function (err) {
+                    alert("Gagal terhubung ke Studio: " + err);
+                    loadSistemDasar();
+                }).getDataFromStudio(currentIdOrder);
+
+            } else {
+                loadSistemDasar();
+            }
+        };
+
+        function loadSistemDasar() {
+            showLoading('Loading...', 'Akan segera dibuka untuk anda...');
+
+            google.script.run.withSuccessHandler(function (data) {
+                dbPrice = data;
+                hideLoading();
+                updatePricePreview();
+            }).withFailureHandler(function (err) {
+                alert("Gagal memuat harga: " + err);
+                hideLoading();
+            }).getPricingData();
+
+            google.script.run.withSuccessHandler(function (data) {
+                dbWilayah = data;
+                const provSelect = document.getElementById('provinsi');
+                if (dbWilayah && provSelect) {
+                    provSelect.innerHTML = '<option value="">-- Pilih Provinsi --</option>';
+                    Object.keys(dbWilayah).sort().forEach(p => {
+                        let o = document.createElement('option');
+                        o.value = p;
+                        o.innerText = p;
+                        provSelect.appendChild(o);
+                    });
+                }
+            }).getDatabaseWilayah();
+        }
+
+        function onProvinsiChange() {
+            const prov = document.getElementById('provinsi').value;
+            const kabSelect = document.getElementById('kabupaten');
+            const kecSelect = document.getElementById('kecamatan');
+
+            kabSelect.innerHTML = '<option value="">-- Pilih Kota/Kab --</option>';
+            kecSelect.innerHTML = '<option value="">-- Pilih Kecamatan --</option>';
+            kecSelect.disabled = true;
+
+            if (prov && dbWilayah[prov]) {
+                kabSelect.disabled = false;
+                Object.keys(dbWilayah[prov]).sort().forEach(k => {
+                    let o = document.createElement('option');
+                    o.value = k;
+                    o.innerText = k;
+                    kabSelect.appendChild(o);
+                });
+            } else {
+                kabSelect.disabled = true;
+            }
+            resetOngkir();
+        }
+
+        function onKabupatenChange() {
+            const prov = document.getElementById('provinsi').value;
+            const kab = document.getElementById('kabupaten').value;
+            const kecSelect = document.getElementById('kecamatan');
+
+            kecSelect.innerHTML = '<option value="">-- Pilih Kecamatan --</option>';
+
+            if (prov && kab && dbWilayah[prov][kab]) {
+                kecSelect.disabled = false;
+                dbWilayah[prov][kab].sort().forEach(k => {
+                    let o = document.createElement('option');
+                    o.value = k;
+                    o.innerText = k;
+                    kecSelect.appendChild(o);
+                });
+            } else {
+                kecSelect.disabled = true;
+            }
+            resetOngkir();
+        }
+
+        window.onbeforeunload = function () {
+            if (cartItems.length > 0) return "Pesanan Anda belum tersimpan!";
+        };
+
+        function toggleWarnaPO() {
+            const w = document.getElementById('warna').value;
+            document.getElementById('box-warna-po').style.display = (w === "Lainnya (PO)") ? "block" : "none";
+            if (w !== "Lainnya (PO)") document.getElementById('warnaPO').value = '';
+            updatePricePreview();
+        }
+
+        function addTempSablon() {
+            let sisi = document.getElementById('temp-sisi').value;
+            let area = document.getElementById('temp-area').value;
+            let qty = parseInt(document.getElementById('temp-qty').value) || 1;
+            tempSablonAreasList.push({ sisi: sisi, area: area, qty: qty });
+            document.getElementById('temp-qty').value = 1;
+            renderTempSablon();
+            updatePricePreview();
+        }
+
+        function removeTempSablon(index) {
+            tempSablonAreasList.splice(index, 1);
+            renderTempSablon();
+            updatePricePreview();
+        }
+
+        function renderTempSablon() {
+            let listDiv = document.getElementById('temp-sablon-list');
+            listDiv.innerHTML = "";
+            if (tempSablonAreasList.length > 0) {
+                tempSablonAreasList.forEach((item, index) => {
+                    listDiv.innerHTML += `
+          <div style="display:flex; justify-content:space-between; align-items:center; background:#f1f5f9; padding:10px 12px; border-radius:6px; font-size:13px; border:1px solid #e2e8f0;">
+            <span><strong>${item.qty}x</strong> ${item.sisi} - ${item.area}</span>
+            <span style="color:var(--danger); cursor:pointer; font-weight:bold; padding:2px 8px; background:#fee2e2; border-radius:4px;" onclick="removeTempSablon(${index})">X</span>
+          </div>
+        `;
+                });
+            }
+        }
+
+        // ==========================================
+        // PERBAIKAN 1: UPDATE PREVIEW HARGA (HURUF BESAR)
+        // ==========================================
+        function updatePricePreview() {
+            if (!dbPrice) return;
+            const kain = document.getElementById('kain').value;
+            const size = document.getElementById('size').value;
+            const lengan = document.getElementById('lengan').value;
+            const qty = parseInt(document.getElementById('qty').value) || 1;
+            const warna = document.getElementById('warna').value;
+
+            // FIX: Ubah format pencarian jadi HURUF BESAR SEMUA
+            let kodeKaos = ("Kaos_" + kain + "_" + size + "_" + lengan).toUpperCase();
+            let hargaKaosPolos = dbPrice.kaos[kodeKaos] || 0;
+
+            let currentWarna = warna === "Lainnya (PO)" ? document.getElementById('warnaPO').value.trim().toLowerCase() : warna.trim().toLowerCase();
+            let simulatedTotalQty = qty + cartItems.reduce((sum, item) => sum + item.qty, 0);
+
+            let colorSet = new Set(cartItems.map(item => item.warna === "Lainnya (PO)" ? item.warnaPO.trim().toLowerCase() : item.warna.trim().toLowerCase()));
+            if (currentWarna) colorSet.add(currentWarna);
+            let fabricSet = new Set(cartItems.map(item => item.kain));
+            fabricSet.add(kain);
+
+            let isGrosir = (simulatedTotalQty >= 12 && colorSet.size <= 2 && fabricSet.size === 1);
+            let hargaSablonDict = isGrosir ? dbPrice.sablonGrosir : dbPrice.sablonSatuan;
+
+            let kodeSablon = document.getElementById('kodeSablon').value.trim().toUpperCase();
+            let hargaSablon = 0;
+
+            window.currentSablonAreas = [];
+            window.currentSablonText = "";
+
+            if (kodeSablon.startsWith("MSP-")) {
+                const sisiMap = { "DPN": "Depan", "BLK": "Belakang", "NCK": "Neck", "LKN": "Lengan Kanan", "LKR": "Lengan Kiri" };
+                let parts = kodeSablon.split("-").slice(1);
+                let rincianText = "";
+
+                parts.forEach(part => {
+                    let match = part.match(/([A-Z]+)\[(.*?)\]/);
+                    if (match) {
+                        let sisiCode = match[1];
+                        let areaCodeStr = match[2].toUpperCase();
+                        let namaSisi = sisiMap[sisiCode] || sisiCode;
+
+                        let hargaArea = 0;
+                        let areas = areaCodeStr.split(",");
+                        areas.forEach(a => {
+                            let key = a.trim().toUpperCase();
+                            hargaArea += (hargaSablonDict[key] || 0);
+                            window.currentSablonAreas.push(key);
+                        });
+
+                        hargaSablon += hargaArea;
+                        rincianText += `[${namaSisi}: ${areaCodeStr}] `;
+                    }
+                });
+                window.currentSablonText = `Kode MSP (${rincianText})`;
+                document.getElementById('breakdown-kode').innerHTML = `Terdeteksi: <strong>${rincianText}</strong>`;
+            } else {
+                document.getElementById('breakdown-kode').innerHTML = "";
+                let listTeksManual = [];
+                tempSablonAreasList.forEach(item => {
+                    let areaUpper = item.area.toUpperCase(); // FIX: Pastikan Area UpperCase
+                    let hargaArea = hargaSablonDict[areaUpper] || 0;
+                    hargaSablon += (hargaArea * item.qty);
+                    listTeksManual.push(`[${item.sisi}: ${item.qty}x ${item.area}]`);
+                    for (let i = 0; i < item.qty; i++) { window.currentSablonAreas.push(areaUpper); }
+                });
+                window.currentSablonText = listTeksManual.length === 0 ? "Polosan (Tanpa Sablon)" : listTeksManual.join(" + ");
+            }
+
+            let pricePerPcs = hargaKaosPolos + hargaSablon;
+            let infoTeks = isGrosir ? `<span style="color:#10b981; font-weight:bold;">(Tarif Grosir Aktif)</span>` : "";
+
+            if (hargaKaosPolos === 0) {
+                document.getElementById('live-price-box').innerHTML = `Data tidak ditemukan. Cek koneksi Harga.`;
+            } else {
+                document.getElementById('live-price-box').innerHTML = `
+        <div style="font-size:12px; opacity:0.9; margin-bottom:5px;">Estimasi per Pcs:</div>
+        <div style="font-size:13px; margin-bottom: 5px; font-weight: 600; line-height: 1.4;">Area Sablon:<br>${window.currentSablonText}</div>
+        <strong>Rp ${pricePerPcs.toLocaleString('id-ID')} /pcs</strong> ${infoTeks}<br>
+        <div style="margin-top:8px; border-top:1px solid rgba(255,255,255,0.2); padding-top:8px;">Subtotal Sementara: <strong>Rp ${(pricePerPcs * qty).toLocaleString('id-ID')}</strong></div>
+      `;
+            }
+        }
+
+        function addToCart() {
+            const kain = document.getElementById('kain').value;
+            const size = document.getElementById('size').value;
+            const lengan = document.getElementById('lengan').value;
+            const qty = parseInt(document.getElementById('qty').value);
+            const warna = document.getElementById('warna').value;
+            const warnaPO = document.getElementById('warnaPO').value;
+
+            if (qty < 1) return alert("Quantity minimal 1!");
+            if (warna === "Lainnya (PO)" && !warnaPO) return alert("Isi request warna PO!");
+
+            let sablonAreas = window.currentSablonAreas || [];
+            let sablonText = window.currentSablonText || "Polosan";
+
+            cartItems.push({ kain: kain, size: size, lengan: lengan, qty: qty, warna: warna, warnaPO: warnaPO, sablonAreas: sablonAreas, sablonText: sablonText });
+
+            document.getElementById('qty').value = 1;
+            renderCart();
+            updatePricePreview();
+            resetOngkir();
+        }
+
+        // ==========================================
+        // PERBAIKAN 2: RENDER CART (HURUF BESAR)
+        // ==========================================
+        function renderCart() {
+            const list = document.getElementById('cart-list');
+            let totalQty = cartItems.reduce((sum, item) => sum + item.qty, 0);
+            let colorSet = new Set(cartItems.map(item => item.warna === "Lainnya (PO)" ? item.warnaPO.trim().toLowerCase() : item.warna.trim().toLowerCase()));
+            let fabricSet = new Set(cartItems.map(item => item.kain));
+
+            let isGlobalGrosir = (totalQty >= 12 && colorSet.size <= 2 && fabricSet.size === 1);
+            let hasPO = Array.from(colorSet).some(c => cartItems.some(i => i.warna === "Lainnya (PO)"));
+            totalBelanja = 0;
+
+            if (cartItems.length === 0) {
+                list.innerHTML = "Belum ada barang di keranjang.";
+            } else {
+                list.innerHTML = "";
+                cartItems.forEach((item, index) => {
+                    // FIX: Ubah format pencarian jadi HURUF BESAR SEMUA
+                    let kodeKaos = ("Kaos_" + item.kain + "_" + item.size + "_" + item.lengan).toUpperCase();
+                    let hargaKaos = dbPrice.kaos[kodeKaos] || 0;
+                    let hargaSablonDict = isGlobalGrosir ? dbPrice.sablonGrosir : dbPrice.sablonSatuan;
+                    let hargaSablonTotal = 0;
+
+                    if (item.sablonAreas && item.sablonAreas.length > 0) {
+                        item.sablonAreas.forEach(area => {
+                            let areaUpper = area.toUpperCase(); // FIX: Pastikan Sablon UpperCase
+                            hargaSablonTotal += hargaSablonDict[areaUpper] || 0;
+                        });
+                    }
+                    let subtotalItem = (hargaKaos + hargaSablonTotal) * item.qty;
+                    totalBelanja += subtotalItem;
+
+                    let displayWarna = item.warna === "Lainnya (PO)" ? `PO: ${item.warnaPO}` : item.warna;
+                    list.innerHTML += `
+          <div style="border-bottom: 1px dashed var(--border); padding: 12px 0; display:flex; justify-content:space-between; align-items:flex-start;">
+            <div style="font-size: 13px; line-height: 1.5;">
+              <strong style="color:var(--primary); font-size:14px;">${item.qty}x</strong> <strong>${item.kain} Lengan ${item.lengan}</strong><br>
+              <span style="color:var(--text-light);">${displayWarna} - Size ${item.size}</span><br>
+              <span style="display:inline-block; margin-top:4px;">Sablon: <strong>${item.sablonText}</strong></span><br>
+              <strong style="color:var(--text); margin-top:4px; display:inline-block;">Rp ${subtotalItem.toLocaleString('id-ID')}</strong>
+            </div>
+            <button type="button" onclick="hapusItem(${index})" style="background:#fee2e2; color:var(--danger); border:none; padding:6px 12px; font-size:12px; border-radius:6px; font-weight:600; width:auto;">X Hapus</button>
+          </div>
+        `;
+                });
+
+                let notifHtml = "";
+                if (totalQty >= 12 && (colorSet.size > 2 || fabricSet.size > 1)) {
+                    notifHtml += `<div class="info-box info-yellow"><i class="fa-solid fa-triangle-exclamation"></i> <strong>Diskon Batal:</strong> Pesanan ${totalQty}pcs tapi beda bahan/lebih dari 2 warna.</div>`;
+                } else if (totalQty >= 12 && colorSet.size <= 2 && fabricSet.size === 1) {
+                    notifHtml += `<div class="info-box" style="background:#dcfce7; color:#166534; border:1px solid #bbf7d0;"><i class="fa-solid fa-circle-check"></i> <strong>Berhasil:</strong> Harga Grosir Lusinan Aktif!</div>`;
+                }
+                if (hasPO) {
+                    notifHtml += `<div class="info-box info-blue"><i class="fa-solid fa-circle-info"></i> Order ini mengandung warna Custom (Pre-Order).</div>`;
+                }
+                list.innerHTML = notifHtml + list.innerHTML;
+            }
+            document.getElementById('total-cart').innerText = totalBelanja.toLocaleString('id-ID');
+            resetOngkir(); // Reset ongkir jika keranjang berubah
+        }
+
+        function hapusItem(index) {
+            cartItems.splice(index, 1);
+            renderCart();
+            updatePricePreview();
+            resetOngkir(); // Reset ongkir jika item dihapus
+        }
+
+        function nextStep(n) {
+            // Validasi Step 1 (Informasi Klien)
+            if (n === 2) {
+                const nama = document.getElementById('nama').value.trim();
+                const wa = document.getElementById('wa').value.trim();
+                const email = document.getElementById('email').value.trim();
+                if (!nama || !wa || !email) return alert("MAAF: Informasi Klien & Brand WAJIB diisi lengkap!");
+
+                // VALIDASI WA (Request: Min 11 Digit)
+                if (wa.length < 11) return alert("Nomor WhatsApp Klien minimal 11 digit!");
+
+                // VALIDASI EMAIL (Request: Harus pakai @)
+                if (!email.includes("@")) return alert("Format Email tidak valid (harus mengandung '@')!");
+
+                const polaEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                if (!polaEmail.test(email)) return alert("Format Email SALAH!");
+            }
+
+            // Validasi Step 2 (Keranjang)
+            if (n === 3 && cartItems.length === 0) return alert("Keranjang belanja kosong! Masukkan produk dulu.");
+
+            // ==========================================
+            // FIX VALIDASI STEP 3 (DESAIN)
+            // ==========================================
+            if (n === 4) {
+                // Cek apakah ada referensi folder dari Studio (urlParams.ref) 
+                // atau ada ID Order dari URL (currentIdOrder)
+                const isFromStudio = currentIdOrder || urlParams.ref;
+
+                if (!isFromStudio) {
+                    // Jika BUKAN dari studio, maka WAJIB upload file manual
+                    if (document.getElementById('desain').files.length === 0) {
+                        return alert("Harap unggah file desain HD Anda!");
+                    }
+
+                    // Syarat SLA tetap wajib dicentang oleh semua pengguna
+                    if (!document.getElementById('sla-agree').checked) {
+                        return alert("Anda wajib menyetujui SLA & Hak Cipta untuk melanjutkan!");
+                    }
+                }
+            }
+
+            if (n === 5) {
+                const isDropship = document.getElementById('is-dropship').checked;
+                const mode = document.querySelector('input[name="shipping-mode"]:checked').value;
+                const isMarketplace = (mode === 'marketplace');
+
+                if (isMarketplace) {
+                    // Skip validation for recipient and detailed address in marketplace mode
+                } else {
+                    if (isDropship) {
+                        const namaPenerima = document.getElementById('nama-penerima').value;
+                        const hpPenerima = document.getElementById('hp-penerima').value;
+                        if (!namaPenerima || !hpPenerima) return alert("Harap isi data penerima dropship.");
+                        if (hpPenerima.length < 11) return alert("Nomor WA Penerima minimal 11 digit!");
+                    }
+                    if (!document.getElementById('alamat').value || !document.getElementById('kabupaten').value || !document.getElementById('kecamatan').value) {
+                        return alert("Lengkapi alamat pengiriman (Kota & Kecamatan)!");
+                    }
+                }
+
+                // WAJIB HITUNG ONGKIR (Hanya untuk mode Reguler)
+                if (mode === 'regular' && tarifOngkir === 0) {
+                    alert("⚠️ PERUBAHAN DETEKSI: Mohon klik tombol 'Hitung Ongkir' ulang untuk memastikan tarif terbaru!");
+                    return;
+                }
+            }
+
+            // Navigasi Tampilan
+            document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
+            document.getElementById('step' + n).classList.add('active');
+            document.querySelectorAll('.dot').forEach((d, i) => d.classList.toggle('active', i < n));
+            document.getElementById('progress-fill').style.width = ((n - 1) / 4) * 100 + '%';
+
+            if (n === 5) updateRingkasanTagihan();
+        }
+
+        function toggleRecipientFields() {
+            const isDropship = document.getElementById('is-dropship').checked;
+            document.getElementById('recipient-fields').style.display = isDropship ? 'block' : 'none';
+        }
+
+        function toggleShippingMode() {
+            const mode = document.querySelector('input[name="shipping-mode"]:checked').value;
+            const regulerSection = document.getElementById('section-ongkir-reguler');
+            const marketplaceSection = document.getElementById('section-resi-marketplace');
+            const alamatSection = document.getElementById('section-alamat-pengiriman');
+            const boxKurirManual = document.getElementById('box-kurir-manual');
+            const checkDropship = document.getElementById('is-dropship');
+
+            if (mode === 'marketplace') {
+                regulerSection.style.display = 'none';
+                marketplaceSection.style.display = 'block';
+                alamatSection.style.display = 'none';
+                boxKurirManual.style.display = 'block';
+                
+                // Reset Address Fields requirement
+                document.getElementById('alamat').required = false;
+                document.getElementById('provinsi').required = false;
+                document.getElementById('kabupaten').required = false;
+                document.getElementById('kecamatan').required = false;
+
+                // Hide Dropship Toggle & Fields (Request GAS 2 Point 1)
+                document.getElementById('is-dropship').parentElement.style.display = 'none';
+                document.getElementById('recipient-fields').style.display = 'none';
+                checkDropship.checked = false;
+
+                tarifOngkir = 0;
+                document.getElementById('ongkir-display').innerText = "0";
+            } else {
+                regulerSection.style.display = 'block';
+                marketplaceSection.style.display = 'none';
+                alamatSection.style.display = 'block';
+                boxKurirManual.style.display = 'none';
+
+                // Show Dropship Toggle
+                document.getElementById('is-dropship').parentElement.style.display = 'flex';
+                toggleRecipientFields();
+
+                resetOngkir();
+            }
+        }
+
+        function resetOngkir() {
+            tarifOngkir = 0;
+            const display = document.getElementById('ongkir-display');
+            if (display) display.innerText = "0";
+            const final = document.getElementById('final-ongkir');
+            if (final) final.innerText = "0";
+        }
+
+
+        function onKabupatenInput() {
+            // Deprecated for select version
+            resetOngkir();
+        }
+
+        function cekOngkir() {
+            const prov = document.getElementById('provinsi').value;
+            const kab = document.getElementById('kabupaten').value;
+            const kec = document.getElementById('kecamatan').value;
+            if (!prov || !kab || !kec) return alert("Pilih Provinsi, Kota dan Kecamatan dulu!");
+
+            let totalQty = cartItems.reduce((sum, item) => sum + item.qty, 0);
+            if (totalQty === 0) return alert("Keranjang kosong!");
+
+            document.getElementById('ongkir-display').innerText = "Mengecek...";
+
+            google.script.run.withSuccessHandler(res => {
+                tarifOngkir = res || 0;
+                document.getElementById('ongkir-display').innerText = tarifOngkir.toLocaleString('id-ID');
+            }).withFailureHandler(err => {
+                alert("Gagal menghitung ongkir: " + err);
+                document.getElementById('ongkir-display').innerText = "Gagal";
+            }).getOngkir(prov, kab, kec, totalQty);
+        }
+
+        function togglePayment() {
+            const metode = document.getElementById('metodeBayar').value;
+            document.getElementById('payment-info').style.display = metode ? 'block' : 'none';
+            document.getElementById('info-bank').style.display = (metode === 'Transfer Bank') ? 'block' : 'none';
+            document.getElementById('info-qris').style.display = (metode === 'QRIS') ? 'block' : 'none';
+        }
+
+        function updateRingkasanTagihan() {
+            document.getElementById('final-belanja').innerText = totalBelanja.toLocaleString('id-ID');
+            document.getElementById('final-ongkir').innerText = tarifOngkir.toLocaleString('id-ID');
+            document.getElementById('grand-total').innerText = (totalBelanja + tarifOngkir).toLocaleString('id-ID');
+
+            let reviewHtml = "";
+            cartItems.forEach(item => {
+                let displayWarna = item.warna === "Lainnya (PO)" ? `PO: ${item.warnaPO}` : item.warna;
+                reviewHtml += `
+        <div style="padding: 12px 0; border-bottom: 1px dashed var(--border); display:flex; gap:12px; align-items:flex-start;">
+          <div style="background:var(--bg); padding:6px 10px; border-radius:6px; font-weight:bold; color:var(--primary); height:fit-content;">${item.qty}x</div>
+          <div style="line-height: 1.5;">
+            <strong>${item.kain} Lengan ${item.lengan}</strong><br>
+            <span style="color:var(--text-light); font-size:12px;">${displayWarna} (Size ${item.size})<br>Sablon: ${item.sablonText}</span>
+          </div>
+        </div>
+      `;
+            });
+            document.getElementById('review-cart-list').innerHTML = reviewHtml;
+        }
+
+        function getBase64(file) {
+            if (!file) return Promise.resolve(null);
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader(); reader.readAsDataURL(file);
+                reader.onload = () => resolve({ base64: reader.result.split(',')[1], mime: reader.result.split(';')[0].split(':')[1], name: file.name });
+                reader.onerror = error => reject(error);
+            });
+        }
+
+        async function ensureActiveOrderSessionToken() {
+            if (ACTIVE_SESSION_TOKEN) return ACTIVE_SESSION_TOKEN;
+            return new Promise((resolve, reject) => {
+                google.script.run.withSuccessHandler(function (tk) {
+                    if (!tk) return reject("Gagal membuat sesi baru.");
+                    ACTIVE_SESSION_TOKEN = tk;
+                    resolve(tk);
+                }).withFailureHandler(function (err) {
+                    reject(err);
+                }).getOrderSessionToken();
+            });
+        }
+
+        async function submitFinal() {
+            if (!document.getElementById('metodeBayar').value) return alert("Pilih metode pembayaran!");
+            const fileBukti = document.getElementById('bukti').files[0];
+            if (!fileBukti) return alert("Unggah bukti bayar!");
+
+            showLoading('Memproses Pesanan...', 'Sedang upload file dan validasi data...');
+
+            window.onbeforeunload = null;
+
+            const namaIlustrator = document.getElementById('nama').value;
+            const waIlustrator = document.getElementById('wa').value;
+            const isDropship = document.getElementById('is-dropship').checked;
+            const alamatFisik = document.getElementById('alamat').value;
+            const shippingMode = document.querySelector('input[name="shipping-mode"]:checked').value;
+            const prov = document.getElementById('provinsi').value;
+            const kab = document.getElementById('kabupaten').value;
+            const kec = document.getElementById('kecamatan').value;
+            
+            let alamatLengkap = "";
+            if (shippingMode === 'marketplace') {
+                alamatLengkap = "[MARKETPLACE - LIHAT LABEL]";
+            } else {
+                alamatLengkap = `${alamatFisik}, ${kec}, ${kab}, ${prov}`;
+            }
+
+            let labelAlamatLengkap = "";
+            if (isDropship) {
+                if (shippingMode === 'marketplace') {
+                    labelAlamatLengkap = `[MARKETPLACE MODE]\nPENGIRIM: ${namaIlustrator} (${waIlustrator})\nPENERIMA: [Cek Label/Resi]\nALAMAT: [Lihat Label yang Diunggah]`;
+                } else {
+                    const namaWawan = document.getElementById('nama-penerima').value || "Penerima";
+                    const waWawan = document.getElementById('hp-penerima').value || "-";
+                    labelAlamatLengkap = `[DROPSHIP]\nPENGIRIM: ${namaIlustrator} (${waIlustrator})\nPENERIMA: ${namaWawan} (${waWawan})\nALAMAT: ${alamatLengkap}`;
+                }
+            } else {
+                labelAlamatLengkap = `[SELF-ORDER]\nPENGIRIM: MSP Production (White Label)\nPENERIMA: ${namaIlustrator} (${waIlustrator})\nALAMAT: ${alamatLengkap}`;
+            }
+
+            const freshToken = await ensureActiveOrderSessionToken();
+            let payload = {
+                sessionToken: freshToken,
+                nama: namaIlustrator,
+                wa: waIlustrator,
+                email: document.getElementById('email').value,
+                cart: cartItems,
+                instruksi: document.getElementById('instruksi').value,
+                alamat: labelAlamatLengkap,
+                provinsi: prov,
+                kabupaten: kab,
+                kecamatan: kec,
+                kodepos: document.getElementById('kodepos').value,
+                kurir: (shippingMode === 'marketplace') ? document.getElementById('kurir-manual').value : document.getElementById('kurir').value,
+                ongkir: tarifOngkir,
+                metodeBayar: document.getElementById('metodeBayar').value,
+                refId: urlParams.ref,
+                idDesain: urlParams.idDesain || currentIdOrder || "",
+                folderUrl: urlParams.folderUrl || "",
+                shippingMode: shippingMode
+            };
+
+            try {
+                // Tambahan: Resi Marketplace jika ada
+                if (payload.shippingMode === 'marketplace') {
+                    const fileResi = document.getElementById('resi-marketplace').files[0];
+                    if (!fileResi) {
+                        hideLoading();
+                        return alert("Harap unggah label/resi marketplace Anda!");
+                    }
+                    payload.resiMarketplaceFile = await getBase64(fileResi);
+                }
+                if (!urlParams.ref) {
+                    const fileDesainInput = document.getElementById('desain');
+                    payload.desainFiles = [];
+                    for (let i = 0; i < fileDesainInput.files.length; i++) {
+                        let fileData = await getBase64(fileDesainInput.files[i]);
+                        payload.desainFiles.push(fileData);
+                    }
+
+                    const fileMockupInput = document.getElementById('mockup');
+                    payload.mockupFiles = [];
+                    for (let i = 0; i < fileMockupInput.files.length; i++) {
+                        let fileData = await getBase64(fileMockupInput.files[i]);
+                        payload.mockupFiles.push(fileData);
+                    }
+                }
+
+                const buktiData = await getBase64(fileBukti);
+                if (buktiData) {
+                    payload.buktiBase64 = buktiData.base64;
+                    payload.buktiMimeType = buktiData.mime;
+                }
+
+                google.script.run.withSuccessHandler(async (res) => {
+                    if (res && res.status === "Error" && String(res.message || "").toLowerCase().includes("sesi")) {
+                        try {
+                            ACTIVE_SESSION_TOKEN = "";
+                            payload.sessionToken = await ensureActiveOrderSessionToken();
+                            google.script.run.withSuccessHandler(finalRes => {
+                                if (finalRes.status === "Sukses") {
+                                    const esc = (str) => String(str).replace(/[&<>"']/g, m => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[m]));
+                                    const trackLink = BASE_URL + "?page=tracker&track=" + finalRes.invoice;
+                                    document.getElementById('main-container').innerHTML =
+                                        '<div style="text-align:center; padding: 40px 10px;">' +
+                                        '<div style="font-size:60px; margin-bottom:20px; color:#10b981;"><i class="fa-solid fa-circle-check"></i></div>' +
+                                        '<h2 style="color: #10b981; font-size: 24px; margin-bottom: 10px;">Pesanan Berhasil Dikirim!</h2>' +
+                                        '<p style="color: #64748b; line-height: 1.6;">Tim produksi kami akan segera memvalidasi file dan pembayaran Anda.</p>' +
+                                        '<div style="background: #f1f5f9; padding: 15px; border-radius: 8px; display: inline-block; margin: 20px 0;">' +
+                                        '<div style="font-size: 12px; color: #64748b;">No. Invoice Anda:</div>' +
+                                        '<strong style="font-size: 22px; color: #4f46e5; letter-spacing: 1px;">' + esc(finalRes.invoice) + '</strong>' +
+                                        '</div>' +
+                                        '<p style="font-size: 13px; color: #475569; margin-bottom: 15px;"><i class="fa-solid fa-envelope"></i> Detail invoice sudah dikirim ke email Anda.</p>' +
+                                        '<a href="' + trackLink + '" target="_top" style="text-decoration:none; display:block; margin-bottom:10px;">' +
+                                        '<button type="button" style="background:#4f46e5; color:white; width:100%;"><i class="fa-solid fa-radar"></i> LACAK STATUS PESANAN REAL-TIME</button>' +
+                                        '</a>' +
+                                        '<p style="font-size: 11px; color: #94a3b8;">*Siapkan 4 digit terakhir WA Anda untuk verifikasi saat melacak.</p>' +
+                                        '</div>';
+                                    if (RETURN_TO === "dashboard" && TOKEN) {
+                                        setTimeout(function () {
+                                            window.top.location.href = BASE_URL + "?page=dashboard&token=" + encodeURIComponent(TOKEN);
+                                        }, 1200);
+                                    }
+                                } else {
+                                    alert("Terjadi kesalahan: " + finalRes.message);
+                                    hideLoading();
+                                }
+                            }).processOrderForm(payload);
+                            return;
+                        } catch (e) {
+                            alert("Sesi order gagal diperbarui. Silakan refresh halaman.");
+                            hideLoading();
+                            return;
+                        }
+                    }
+                    if (res.status === "Sukses") {
+                        // Fungsi Sanitasi Sederhana
+                        const esc = (str) => String(str).replace(/[&<>"']/g, m => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[m]));
+
+                        // Gunakan URL Monolith Dinamis dari Server
+                        const trackLink = BASE_URL + "?page=tracker&track=" + res.invoice;
+
+                        document.getElementById('main-container').innerHTML =
+                            '<div style="text-align:center; padding: 40px 10px;">' +
+                            '<div style="font-size:60px; margin-bottom:20px; color:#10b981;"><i class="fa-solid fa-circle-check"></i></div>' +
+                            '<h2 style="color: #10b981; font-size: 24px; margin-bottom: 10px;">Pesanan Berhasil Dikirim!</h2>' +
+                            '<p style="color: #64748b; line-height: 1.6;">Tim produksi kami akan segera memvalidasi file dan pembayaran Anda.</p>' +
+                            '<div style="background: #f1f5f9; padding: 15px; border-radius: 8px; display: inline-block; margin: 20px 0;">' +
+                            '<div style="font-size: 12px; color: #64748b;">No. Invoice Anda:</div>' +
+                            '<strong style="font-size: 22px; color: #4f46e5; letter-spacing: 1px;">' + esc(res.invoice) + '</strong>' +
+                            '</div>' +
+                            '<p style="font-size: 13px; color: #475569; margin-bottom: 15px;"><i class="fa-solid fa-envelope"></i> Detail invoice sudah dikirim ke email Anda.</p>' +
+                            '<a href="' + trackLink + '" target="_top" style="text-decoration:none; display:block; margin-bottom:10px;">' +
+                            '<button type="button" style="background:#4f46e5; color:white; width:100%;"><i class="fa-solid fa-radar"></i> LACAK STATUS PESANAN REAL-TIME</button>' +
+                            '</a>' +
+                            '<p style="font-size: 11px; color: #94a3b8;">*Siapkan 4 digit terakhir WA Anda untuk verifikasi saat melacak.</p>' +
+                            '</div>';
+                        if (RETURN_TO === "dashboard" && TOKEN) {
+                            setTimeout(function () {
+                                window.top.location.href = BASE_URL + "?page=dashboard&token=" + encodeURIComponent(TOKEN);
+                            }, 1200);
+                        }
+                    } else {
+                        alert("Terjadi kesalahan: " + res.message);
+                        hideLoading();
+                    }
+                }).processOrderForm(payload);
+
+            } catch (error) {
+                console.error(error);
+                alert("Gagal memproses file. Pastikan ukuran file tidak terlalu besar.");
+                hideLoading();
+            }
+        }
+    </script>
+</body>
+
+</html>

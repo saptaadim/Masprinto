@@ -1,0 +1,1467 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <base target="_top">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Mitra - Masprinto</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <?!= include('ui/Global_Style'); ?>
+    <?!= include('ui/Global_Script'); ?>
+    <style>
+        body {
+            height: auto !important;
+            overflow-y: auto !important;
+            min-height: 100vh;
+            display: block !important;
+            background: #f1f5f9 !important;
+            margin: 0;
+            padding: 0;
+        }
+
+        .dashboard-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* HEADER */
+        .dash-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            background: white;
+            padding: 20px 30px;
+            border-radius: 20px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+        }
+
+        .dash-header h1 {
+            margin: 0;
+            font-size: 24px;
+            text-align: left;
+        }
+
+        .mitra-badge {
+            background: #e0e7ff;
+            color: var(--primary);
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-weight: bold;
+            font-size: 14px;
+        }
+
+        /* STATS CARDS */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 25px;
+            border-radius: 20px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+            border-left: 5px solid var(--primary);
+        }
+
+        .stat-card.profit {
+            border-left-color: var(--success);
+        }
+
+        .stat-card.hutang {
+            border-left-color: var(--danger);
+        }
+
+        .stat-label {
+            color: var(--text-light);
+            font-size: 13px;
+            font-weight: 600;
+            text-transform: uppercase;
+            margin-bottom: 10px;
+            display: block;
+        }
+
+        .stat-value {
+            font-size: 28px;
+            font-weight: 800;
+            color: var(--text);
+        }
+
+        /* TABLE SECTION */
+        .table-section {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+            overflow: hidden;
+        }
+
+        .table-header {
+            padding: 20px 30px;
+            border-bottom: 1px solid #f1f5f9;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .search-box {
+            position: relative;
+            flex: 1;
+            min-width: 250px;
+        }
+
+        .search-box input {
+            padding-left: 40px;
+            background: #f8fafc;
+        }
+
+        .search-box i {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-light);
+        }
+
+        .table-responsive {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 800px;
+        }
+
+        th {
+            background: #f8fafc;
+            text-align: left;
+            padding: 15px 30px;
+            font-size: 12px;
+            font-weight: 700;
+            color: var(--text-light);
+            text-transform: uppercase;
+        }
+
+        td {
+            padding: 15px 30px;
+            border-bottom: 1px solid #f8fafc;
+            font-size: 14px;
+        }
+
+        .status-pill {
+            padding: 8px 12px;
+            border-radius: 8px;
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            width: 100%;
+            min-width: 120px;
+            border: 1px solid #e2e8f0;
+            background: white;
+            appearance: none;
+            -webkit-appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 fill=%27none%27 viewBox=%270 0 24 24%27 stroke=%27%2364748b%27%3E%3Cpath stroke-linecap=%27round%27 stroke-linejoin=%27round%27 stroke-width=%272%27 d=%27M19 9l-7 7-7-7%27%3E%3C/path%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 8px center;
+            background-size: 14px;
+        }
+
+        .pill-pending {
+            background-color: #fff7ed;
+            color: #9a3412;
+            border-color: #fed7aa;
+        }
+
+        .pill-lunas {
+            background-color: #ecfdf5;
+            color: #065f46;
+            border-color: #a7f3d0;
+        }
+
+        .prod-pill {
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+
+        .prod-antrian {
+            background: #f1f5f9;
+            color: #475569;
+        }
+
+        .prod-proses {
+            background: #eff6ff;
+            color: #1e40af;
+        }
+
+        .prod-kirim {
+            background: #fdf2f8;
+            color: #9d174d;
+        }
+
+        .prod-selesai {
+            background: #ecfdf5;
+            color: #065f46;
+        }
+
+        @media (max-width: 768px) {
+            .dash-header {
+                flex-direction: column;
+                text-align: center;
+                gap: 15px;
+            }
+
+            .dash-header h1 {
+                text-align: center;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* MODAL */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 24px;
+            border-radius: 20px;
+            width: 90%;
+            max-width: 500px;
+            max-height: 86vh;
+            overflow-y: auto;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+        }
+
+        .btn-action {
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 11px;
+            font-weight: 700;
+            cursor: pointer;
+            border: 1px solid transparent;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            margin-right: 5px;
+        }
+
+        .btn-status {
+            background: #ecfdf5;
+            color: #10b981;
+            border: 1px solid #a7f3d0;
+            cursor: default;
+        }
+
+        .btn-view {
+            background: #eff6ff;
+            color: #1e40af;
+            border-color: #dbeafe;
+        }
+
+        .btn-pay {
+            background: #fffbeb;
+            color: #92400e;
+            border-color: #fef3c7;
+        }
+
+        .btn-copy {
+            background: #f1f5f9;
+            color: #475569;
+            border-color: #e2e8f0;
+        }
+
+        .btn-status {
+            background: #f0fdf4;
+            color: #166534;
+            border-color: #dcfce7;
+        }
+
+        .btn-detail {
+            background: #f1f5f9;
+            color: #475569;
+            border-color: #e2e8f0;
+        }
+
+        .detail-box {
+            background: #f8fafc;
+            padding: 15px;
+            border-radius: 10px;
+            border: 1px solid #e2e8f0;
+            margin-top: 10px;
+            font-family: monospace;
+            white-space: pre-wrap;
+            font-size: 12px;
+            line-height: 1.6;
+        }
+
+        .bank-info-box {
+            background: #f8fafc;
+            border: 1px dashed var(--primary);
+            padding: 15px;
+            border-radius: 10px;
+            margin: 15px 0;
+            font-size: 13px;
+            text-align: center;
+        }
+        .modal .modal-content h3 {
+            margin-bottom: 14px;
+            position: sticky;
+            top: -24px;
+            background: white;
+            padding-top: 6px;
+            z-index: 2;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="toast-wrap"></div>
+
+    <div id="system-loading">
+        <div style="text-align:center; padding: 40px 20px;">
+            <div style="font-size:52px; color:var(--primary); margin-bottom:20px; animation: pulse-scale 1.5s ease-in-out infinite;">
+                <i class="fa-solid fa-store"></i>
+            </div>
+            <h2 style="margin:0 0 6px 0; font-size:22px; color:var(--text); font-weight:800;">Masprinto Dashboard</h2>
+            <p id="loading-title" style="margin:0 0 24px 0; font-size:14px; color:var(--text-light); font-weight:500;">Mengautentikasi sesi Anda...</p>
+            <div style="width:200px; height:5px; background:#e2e8f0; border-radius:999px; overflow:hidden; margin:0 auto;">
+                <div id="loading-progress-bar" style="height:100%; background:linear-gradient(90deg,#4f46e5,#7c3aed); border-radius:999px; animation:loading-slide 1.8s ease-in-out infinite;"></div>
+            </div>
+        </div>
+        <style>
+            @keyframes pulse-scale { 0%,100%{transform:scale(1)} 50%{transform:scale(1.12)} }
+            @keyframes loading-slide { 0%{width:0%;margin-left:0} 50%{width:60%;margin-left:20%} 100%{width:0%;margin-left:100%} }
+        </style>
+    </div>
+
+    <div id="app-content">
+        <div class="dashboard-container" id="dash-view" style="display:none;">
+            <!-- Header -->
+            <header class="dash-header">
+                <div>
+                    <h1 id="shop-name-title">Dashboard Mitra</h1>
+                    <p id="mitra-id-label" style="color: var(--text-light); margin: 5px 0 0 0; font-size: 13px;">ID: ...
+                    </p>
+                </div>
+                <div style="display:flex; align-items:center; gap:10px; flex-wrap: wrap; justify-content: center;">
+                    <button onclick="refreshDashboard()" class="btn-action btn-copy"
+                        style="padding:10px 15px; font-size:13px; background: #f1f5f9;" title="Segarkan Data">
+                        <i class="fa-solid fa-arrows-rotate"></i> Refresh
+                    </button>
+                    <button id="btn-keluar"
+                        style="background:#f1f5f9; color:var(--text); padding:10px 15px; border-radius:10px; border:none; cursor:pointer;"
+                        title="Keluar">
+                        <i class="fa-solid fa-right-from-bracket"></i>
+                    </button>
+                </div>
+            </header>
+
+
+            <!-- Stats -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <span class="stat-label">Total Pesanan</span>
+                    <div class="stat-value" id="stat-orders">0</div>
+                </div>
+                <div class="stat-card profit">
+                    <span class="stat-label">Total Profit Anda</span>
+                    <div class="stat-value" id="stat-profit">Rp 0</div>
+                </div>
+                <div class="stat-card hutang">
+                    <span class="stat-label">Hutang ke Pusat</span>
+                    <div class="stat-value" id="stat-hutang">Rp 0</div>
+                </div>
+            </div>
+
+            <!-- TABS NAVIGATION -->
+            <div class="d-flex gap-2 mb-3 flex-wrap border-bottom pb-2">
+                <button onclick="switchTab('orders')" id="tab-orders" class="btn btn-sm btn-outline-primary">
+                    <i class="fa-solid fa-cart-shopping"></i> Riwayat Pesanan
+                </button>
+                <button onclick="switchTab('products')" id="tab-products" class="btn btn-sm btn-outline-secondary">
+                    <i class="fa-solid fa-box"></i> Produk Saya
+                </button>
+                <button onclick="switchTab('designs')" id="tab-designs" class="btn btn-sm btn-outline-secondary">
+                    <i class="fa-solid fa-palette"></i> Katalog Desain Saya
+                </button>
+                <button onclick="switchTab('reports')" id="tab-reports" class="btn btn-sm btn-outline-secondary">
+                    <i class="fa-solid fa-chart-line"></i> Laporan
+                </button>
+                <button onclick="switchTab('settings')" id="tab-settings" class="btn btn-sm btn-outline-secondary">
+                    <i class="fa-solid fa-gear"></i> Pengaturan Akun
+                </button>
+            </div>
+
+
+            <!-- MODAL SPA (Iframe Container) -->
+            <div id="modal-spa" class="modal" style="padding: 20px; box-sizing: border-box;">
+                <div class="modal-content" style="width: 100%; max-width: 1000px; height: 90vh; display: flex; flex-direction: column; padding: 0; overflow: hidden; border-radius: 20px;">
+                    <div style="background: var(--primary); padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; color: white;">
+                        <h3 id="spa-title" style="margin: 0; font-size: 16px;">Modul</h3>
+                        <button onclick="closeModal('modal-spa')" style="background: transparent; border: none; color: white; font-size: 20px; cursor: pointer;"><i class="fa-solid fa-xmark"></i></button>
+                    </div>
+                    <iframe id="spa-iframe" src="" style="width: 100%; height: 100%; border: none; background: #f8fafc;"></iframe>
+                </div>
+            </div>
+
+            <!-- Mitra Bank Info (For Customers) -->
+            <div
+                style="background: white; padding: 20px; border-radius: 20px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05); margin-bottom: 30px; border: 1px dashed var(--primary);">
+                <h3 style="margin:0 0 10px 0; font-size:16px; color:var(--primary);"><i
+                        class="fa-solid fa-building-columns"></i> Rekening Pembayaran (Untuk Customer Anda)</h3>
+                <p style="font-size:13px; color:var(--text-light); margin-bottom:15px;">Informasi ini akan muncul di
+                    form order pelanggan Anda saat mereka melakukan pembayaran.</p>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px;">
+                    <div style="background:#f8fafc; padding:12px; border-radius:10px;">
+                        <span
+                            style="font-size:11px; color:var(--text-light); text-transform:uppercase; font-weight:700;">Nama
+                            Bank</span>
+                        <div id="info-mitra-bank" style="font-weight:700; color:var(--text);">...</div>
+                    </div>
+                    <div style="background:#f8fafc; padding:12px; border-radius:10px;">
+                        <span
+                            style="font-size:11px; color:var(--text-light); text-transform:uppercase; font-weight:700;">No.
+                            Rekening</span>
+                        <div id="info-mitra-acc" style="font-weight:700; color:var(--text);">...</div>
+                    </div>
+                    <div style="background:#f8fafc; padding:12px; border-radius:10px;">
+                        <span
+                            style="font-size:11px; color:var(--text-light); text-transform:uppercase; font-weight:700;">Atas
+                            Nama</span>
+                        <div id="info-mitra-owner" style="font-weight:700; color:var(--text);">...</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Orders Table -->
+            <div id="section-orders" class="table-section">
+                <div class="table-header">
+                    <h2 style="margin:0; font-size:18px;">Riwayat Pesanan</h2>
+                    <div class="search-box">
+                        <i class="fa-solid fa-magnifying-glass"></i>
+                        <input type="text" id="order-search" placeholder="Cari Invoice atau Nama Customer..."
+                            onkeyup="filterTable()">
+                    </div>
+                </div>
+                <div class="table-responsive">
+                    <table id="orders-table">
+                        <thead>
+                            <tr>
+                                <th>Tanggal</th>
+                                <th>Invoice</th>
+                                <th>Customer</th>
+                                <th>Status Bayar</th>
+                                <th>Status Produksi</th>
+                                <th>Resi</th>
+                                <th>Profit</th>
+                                <th>Modal (Pusat)</th>
+                                <th>Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody id="orders-body">
+                            <!-- Data will be injected here -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Designs Catalog -->
+            <div id="section-designs" class="table-section" style="display: none;">
+                <div class="table-header">
+                    <h2 style="margin:0; font-size:18px;">Katalog Desain Saya</h2>
+                    <p style="margin: 5px 0 0 0; font-size: 13px; color: var(--text-light); flex: 1;">Kelola desain yang telah Anda buat di Masprinto Studio.</p>
+                    <button onclick="openSPA('GAS1')" class="btn btn-sm btn-outline-primary">
+                        <i class="fa-solid fa-plus"></i> Buat Desain Baru
+                    </button>
+                </div>
+                <div class="table-responsive">
+                    <table id="designs-table">
+                        <thead>
+                            <tr>
+                                <th>Tanggal Buat</th>
+                                <th>ID Desain</th>
+                                <th>Area Sablon</th>
+                                <th>Status</th>
+                                <th>Aksi Cepat</th>
+                            </tr>
+                        </thead>
+                        <tbody id="designs-body">
+                            <!-- Data Desain akan diinjeksi di sini -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div id="section-products" class="table-section" style="display: none;">
+                <div class="table-header">
+                    <h2 style="margin:0; font-size:18px;">Produk Saya</h2>
+                    <p style="margin: 5px 0 0 0; font-size: 13px; color: var(--text-light); flex: 1;">Katalog produk aktif dari Produk_Mitra.</p>
+                    <div style="display:flex; gap:8px; align-items:center;">
+                        <label for="product-filter" style="font-size:12px; color:var(--text-light); margin:0;">Filter:</label>
+                        <select id="product-filter" onchange="renderProductsTable()" style="padding:8px; border-radius:8px; border:1px solid #e2e8f0;">
+                            <option value="all">Semua</option>
+                            <option value="active">Active</option>
+                            <option value="nonaktif">Nonaktif</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="table-responsive">
+                    <table id="products-table">
+                        <thead>
+                            <tr>
+                                <th>ID Desain</th>
+                                <th>Kode Sablon</th>
+                                <th>Kain</th>
+                                <th>Warna</th>
+                                <th>Profit/Pcs</th>
+                                <th>Status</th>
+                                <th>Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody id="products-body"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div id="section-reports" class="table-section" style="display: none;">
+                <div class="table-header">
+                    <h2 style="margin:0; font-size:18px;">Laporan & Statistik</h2>
+                </div>
+                <div style="padding:20px;">
+                    <div class="stats-grid">
+                        <div class="stat-card"><span class="stat-label">Produk Aktif</span><div class="stat-value" id="report-products">0</div></div>
+                        <div class="stat-card"><span class="stat-label">Total Desain</span><div class="stat-value" id="report-designs">0</div></div>
+                        <div class="stat-card"><span class="stat-label">Order Bulan Ini</span><div class="stat-value" id="report-orders-month">0</div></div>
+                        <div class="stat-card profit"><span class="stat-label">Estimasi Profit</span><div class="stat-value" id="report-profit">Rp 0</div></div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="section-settings" class="table-section" style="display: none;">
+                <div class="table-header">
+                    <h2 style="margin:0; font-size:18px;">Pengaturan Akun</h2>
+                </div>
+                <div style="padding:20px;" class="row g-3">
+                    <div class="col-md-6"><label class="form-label">Nama Toko</label><input id="settings-nama" class="form-control"></div>
+                    <div class="col-md-6"><label class="form-label">Email (readonly)</label><input id="settings-email" class="form-control" readonly></div>
+                    <div class="col-md-6"><label class="form-label">WA</label><input id="settings-wa" class="form-control"></div>
+                    <div class="col-md-6"><label class="form-label">Bank</label><input id="settings-bank" class="form-control"></div>
+                    <div class="col-md-6"><label class="form-label">No Rekening</label><input id="settings-acc" class="form-control"></div>
+                    <div class="col-md-6"><label class="form-label">Atas Nama</label><input id="settings-owner" class="form-control"></div>
+                    <div class="col-12"><label class="form-label">Alamat</label><textarea id="settings-alamat" class="form-control" rows="2"></textarea></div>
+                    <div class="col-12">
+                        <button onclick="saveSettings()" class="btn btn-primary btn-sm"><i class="fa-solid fa-floppy-disk"></i> Simpan Pengaturan</button>
+                    </div>
+                </div>
+            </div>
+
+            <footer style="text-align:center; padding:40px 0; color:var(--text-light); font-size:12px;">
+                &copy; 2026 Masprinto
+            </footer>
+        </div>
+    </div>
+
+    <!-- MODAL DETAIL PESANAN -->
+    <div id="modal-detail" class="modal">
+        <div class="modal-content">
+            <h3 style="margin-top:0;"><i class="fa-solid fa-list-check"></i> Detail Pesanan</h3>
+            <div id="detail-content" class="detail-box">
+                <!-- Rincian order akan muncul di sini -->
+            </div>
+            <div style="margin-top:20px;">
+                <button class="btn-secondary" onclick="closeModal('modal-detail')" style="width:100%;">Tutup</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="modal-track" class="modal">
+        <div class="modal-content">
+            <h3 style="margin-top:0;"><i class="fa-solid fa-truck-fast"></i> Tracking Pesanan</h3>
+            <div id="track-content" class="detail-box">Memuat tracking...</div>
+            <div style="margin-top:20px;">
+                <button class="btn-secondary" onclick="closeModal('modal-track')" style="width:100%;">Tutup</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL BAYAR PUSAT -->
+    <div id="modal-pay" class="modal">
+        <div class="modal-content">
+            <h3 style="margin-top:0;"><i class="fa-solid fa-money-bill-transfer"></i> Bayar Modal ke Pusat</h3>
+            <p style="font-size:13px; color:var(--text-light);">Silakan transfer nominal modal sesuai rincian di bawah:
+            </p>
+
+            <div class="bank-info-box" id="pay-pusat-info">
+                <div class="form-group" style="margin-bottom:15px;">
+                    <label>Pilih Metode Pembayaran:</label>
+                    <select id="metodeBayarPusat" onchange="togglePusatPayment()"
+                        style="width:100%; padding:10px; border-radius:8px; border:1px solid #e2e8f0;">
+                        <option value="Transfer Bank">Transfer Bank Manual</option>
+                        <option value="QRIS">QRIS Otomatis</option>
+                    </select>
+                </div>
+
+                <div id="info-pusat-bank">
+                    Mohon transfer ke rekening Pusat:<br>
+                    <strong style="font-size:16px; color:var(--primary);">Bank JAGO - 102045214351</strong><br>
+                    A/n Dimas Yuda Saputra
+                </div>
+
+                <div id="info-pusat-qris" style="display: none;">
+                    Scan QRIS Pusat dibawah ini:<br>
+                    <img src="https://i.imgur.com/g2ORh66.jpeg" alt="QRIS PUSAT" width="200"
+                        style="margin-top:10px; border-radius: 8px; border: 1px solid #e2e8f0;">
+                </div>
+            </div>
+
+            <div style="background:#f1f5f9; padding:15px; border-radius:10px; margin-bottom:15px;">
+                <div style="display:flex; justify-content:space-between; font-size:13px; margin-bottom:5px;">
+                    <span>Invoice:</span> <strong id="modal-pay-inv">...</strong>
+                </div>
+                <div style="display:flex; justify-content:space-between; font-size:14px;"><span>Nominal Modal:</span>
+                    <strong id="modal-pay-amount">Rp 0</strong>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="modal-pay-file">Upload Bukti Bayar ke Pusat</label>
+                <input type="file" id="modal-pay-file" accept="image/*">
+            </div>
+
+            <div style="display:flex; gap:10px; margin-top:20px;">
+                <button class="btn-secondary" onclick="closeModal('modal-pay')" style="flex:1;">Batal</button>
+                <button id="btn-confirm-pay" onclick="confirmPaymentToCenter()" style="flex:1;">Kirim Bukti</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL JUAL DESAIN -->
+    <div id="modal-sell-design" class="modal">
+        <div class="modal-content">
+            <h3 style="margin-top:0;"><i class="fa-solid fa-store"></i> Jual Desain Ini</h3>
+            <p style="font-size:13px; color:var(--text-light);">Lengkapi spesifikasi produk ringkas, lalu simpan ke Produk_Mitra.</p>
+
+            <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:10px; padding:12px; margin-bottom:12px;">
+                <div style="font-size:12px; color:var(--text-light);">ID Desain</div>
+                <div id="sell-design-id" style="font-weight:700; color:var(--primary);">-</div>
+            </div>
+
+            <div class="form-group">
+                <label for="sell-kode">Kode Sablon</label>
+                <input id="sell-kode" type="text" placeholder="Contoh: MSP-DPN[A3]-BLK[LOGO]">
+            </div>
+            <div style="display:flex; gap:10px;">
+                <div class="form-group" style="flex:1;">
+                    <label for="sell-kain">Kain Default</label>
+                    <select id="sell-kain">
+                        <option value="30s">30s</option>
+                        <option value="24s">24s</option>
+                        <option value="20s">20s</option>
+                    </select>
+                </div>
+                <div class="form-group" style="flex:1;">
+                    <label for="sell-warna">Warna Default</label>
+                    <select id="sell-warna">
+                        <option value="Hitam">Hitam</option>
+                        <option value="Putih">Putih</option>
+                        <option value="Navy">Navy</option>
+                        <option value="Lainnya">Lainnya</option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-group" id="sell-warna-lain-box" style="display:none;">
+                <label for="sell-warna-lain">Input Warna Lainnya</label>
+                <input id="sell-warna-lain" type="text" placeholder="Contoh: Maroon, Army, Coklat Tua">
+            </div>
+            <div class="form-group">
+                <label for="sell-profit">Profit per Pcs (Rp)</label>
+                <input id="sell-profit" type="number" min="0" placeholder="Contoh: 20000">
+            </div>
+
+            <div style="display:flex; gap:10px; margin-top:15px;">
+                <button class="btn-secondary" onclick="closeModal('modal-sell-design')" style="flex:1;">Batal</button>
+                <button id="btn-submit-sell" onclick="submitSellDesign()" style="flex:1;">Simpan Produk</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Data dari Server (JSON Safe Injection) -->
+    <div id="server-data-json" style="display:none;">
+        <?!= JSON.stringify({ 
+            token: token, 
+            baseUrl: baseUrl,
+            sessionToken: (typeof sessionToken !== 'undefined' ? sessionToken : '')
+        }) ?>
+    </div>
+
+    <script>
+        const serverData = JSON.parse(document.getElementById('server-data-json').textContent);
+        let TOKEN = serverData.token;
+        const BASE_URL = serverData.baseUrl;
+        const SESSION_TOKEN = serverData.sessionToken;
+        let dashboardData = null;
+        let activeSellDesign = null;
+        let sellMode = "create";
+        
+        function showLoading(title) {
+            document.getElementById('system-loading').style.display = 'flex';
+            document.getElementById('loading-title').innerText = title || 'Loading ...';
+        }
+        function hideLoading() {
+            document.getElementById('system-loading').style.display = 'none';
+        }
+        window.alert = window.masprintoAlert;
+
+        // Fallback: Ambil token dari URL jika template gagal mempassing (Kasus Magic Link Email)
+        if (!TOKEN) {
+            const urlParams = new URLSearchParams(window.location.search);
+            TOKEN = urlParams.get('token') || "";
+        }
+        if (!TOKEN) TOKEN = localStorage.getItem('masprinto_dashboard_token') || "";
+
+        window.onload = function () {
+            // Set listener untuk tombol keluar
+            const btnKeluar = document.getElementById('btn-keluar');
+            if (btnKeluar) btnKeluar.onclick = () => {
+                localStorage.removeItem('masprinto_dashboard_token');
+                localStorage.removeItem('masprinto_dashboard_mitra');
+                location.href = BASE_URL;
+            };
+            const sellWarna = document.getElementById('sell-warna');
+            if (sellWarna) sellWarna.onchange = toggleSellWarnaLain;
+
+            if (!TOKEN) {
+                hideLoading();
+                tampilkanFormLogin();
+                return;
+            }
+            
+            // FASE 3: Sinkronisasi Draft
+            const draftId = localStorage.getItem('masprinto_draft_id');
+            if (draftId) {
+                showLoading('Sinkronisasi Desain...');
+                
+                google.script.run.withSuccessHandler(res => {
+                    localStorage.removeItem('masprinto_draft_id');
+                    alert(res.message);
+                    loadDashboard();
+                }).withFailureHandler(err => {
+                    localStorage.removeItem('masprinto_draft_id');
+                    loadDashboard();
+                }).claimDraftDesign(TOKEN, SESSION_TOKEN, draftId);
+            } else {
+                loadDashboard();
+            }
+
+            // FASE 3: Mendengarkan pesan dari Iframe (contoh: Saat desain tersimpan)
+            window.addEventListener('message', function(event) {
+                if (event.data && event.data.action === 'draft_saved') {
+                    // Tutup modal
+                    closeModal('modal-spa');
+                    
+                    // Simpan ID ke local storage agar otomatis tersinkronisasi saat reload
+                    localStorage.setItem('masprinto_draft_id', event.data.draftId);
+                    
+                    // Beri notifikasi ke user sebelum reload
+                    alert("Desain " + event.data.draftId + " berhasil disimpan. Mengalihkan ke dashboard untuk sinkronisasi...");
+                    window.location.reload();
+                }
+            });
+        };
+
+        function switchTab(tabName) {
+            const sections = ['orders', 'products', 'designs', 'reports', 'settings'];
+            sections.forEach(s => {
+                const sec = document.getElementById('section-' + s);
+                if (sec) sec.style.display = (s === tabName) ? 'block' : 'none';
+                const tabBtn = document.getElementById('tab-' + s);
+                if (tabBtn) {
+                    tabBtn.classList.toggle('btn-outline-primary', s === tabName);
+                    tabBtn.classList.toggle('btn-outline-secondary', s !== tabName);
+                }
+            });
+        }
+
+        function refreshDashboard() {
+            showLoading('Memuat Dashboard...');
+            loadDashboard();
+        }
+
+        // FASE 3: Buka Modul SPA
+        function openSPA(moduleType) {
+            if (!dashboardData || !dashboardData.mitra) return;
+            
+            const iframe = document.getElementById('spa-iframe');
+            const title = document.getElementById('spa-title');
+            
+            if (moduleType === 'GAS1') {
+                title.innerHTML = '<i class="fa-solid fa-palette"></i> Masprinto Studio';
+                iframe.src = BASE_URL + "?page=studio";
+            } else if (moduleType === 'GAS2') {
+                title.innerHTML = '<i class="fa-solid fa-cart-plus"></i> Form Order Kustom';
+                iframe.src = BASE_URL + "?page=shop&mid=" + dashboardData.mitra.idMitra;
+            } else if (moduleType === 'GAS4') {
+                title.innerHTML = '<i class="fa-solid fa-images"></i> Galeri Katalog';
+                iframe.src = BASE_URL + "?page=tracker"; // Tracker diubah jadi galeri nanti/saat ini
+            }
+            
+            openModal('modal-spa');
+        }
+
+        function loadDashboard() {
+            google.script.run.withSuccessHandler(res => {
+                hideLoading();
+                if (res && res.status === "Sukses") {
+                    // Prefer static token mitra agar aksi dashboard tidak bergantung magic-link yang bisa kedaluwarsa.
+                    if (res.mitra && res.mitra.token) TOKEN = res.mitra.token;
+                    localStorage.setItem('masprinto_dashboard_token', TOKEN);
+                    localStorage.setItem('masprinto_dashboard_mitra', (res.mitra && res.mitra.idMitra) ? res.mitra.idMitra : "");
+                    dashboardData = res;
+                    renderUI();
+                } else {
+                    tampilkanFormMintaLink(res ? res.message : "Gagal memuat data dari server.");
+                }
+            }).withFailureHandler(err => {
+                hideLoading();
+                alert("Kesalahan Koneksi: " + err.toString());
+            }).getDashboardData(TOKEN, SESSION_TOKEN);
+        }
+
+        function tampilkanFormLogin() {
+            document.getElementById('app-content').innerHTML =
+                '<div style="text-align:center; padding:100px 20px; font-family:\'Plus Jakarta Sans\', sans-serif;">' +
+                '<div style="font-size:60px; color:var(--primary); margin-bottom:20px;"><i class="fa-solid fa-shield-lock"></i></div>' +
+                '<h1 style="font-size:24px;">Login Dashboard Mitra</h1>' +
+                '<p style="color:var(--text-light); max-width:400px; margin: 0 auto 30px;">Demi keamanan, silakan masukkan Email atau ID Mitra Anda untuk menerima link akses (Berlaku 24 Jam).</p>' +
+                '<div style="max-width:400px; margin:auto; background:white; padding:30px; border-radius:20px; box-shadow:0 10px 25px rgba(0,0,0,0.05);">' +
+                '<input type="text" id="input-minta-link" placeholder="Email / ID Mitra" style="width:100%; padding:12px; border-radius:10px; border:1.5px solid var(--border); margin-bottom:15px; box-sizing:border-box;">' +
+                '<button onclick="prosesMintaLink()" style="width:100%; background:var(--primary); color:white; border:none; padding:15px; border-radius:10px; font-weight:bold; cursor:pointer;">KIRIM LINK AKSES</button>' +
+                '<p style="font-size:12px; color:var(--text-light); margin-top:15px;">Link akan dikirim ke alamat email yang terdaftar.</p>' +
+                '</div>' +
+                '</div>';
+        }
+
+        function tampilkanFormMintaLink(msg) {
+            // Jika pesan mengindikasikan token biasa gagal (bukan error fatal), tampilkan form login bersih
+            const isAuthIssue = !msg || /sesi|token|kadaluwarsa|tidak valid|gagal/i.test(msg);
+            const displayMsg = isAuthIssue
+                ? 'Sesi Anda telah berakhir. Masukkan email atau ID Mitra untuk mendapatkan link akses baru (berlaku 24 jam).'
+                : msg;
+
+            document.getElementById('app-content').innerHTML =
+                '<div style="text-align:center; padding:80px 20px; font-family:\'Plus Jakarta Sans\', sans-serif;">' +
+                '<div style="font-size:56px; color:var(--primary); margin-bottom:20px;"><i class="fa-solid fa-envelope-open-text"></i></div>' +
+                '<h1 style="font-size:22px;">Masuk ke Dashboard Mitra</h1>' +
+                '<p style="color:var(--text-light); max-width:380px; margin: 0 auto 25px; font-size:14px; line-height:1.6;">' + displayMsg + '</p>' +
+                '<div style="max-width:380px; margin:auto; background:white; padding:28px; border-radius:20px; box-shadow:0 10px 25px rgba(0,0,0,0.06);">' +
+                '<input type="text" id="input-minta-link" placeholder="Email / ID Mitra" style="width:100%; padding:13px 15px; border-radius:10px; border:1.5px solid #e2e8f0; margin-bottom:14px; box-sizing:border-box; font-family:inherit; font-size:14px;">' +
+                '<button onclick="prosesMintaLink()" style="width:100%; background:var(--primary); color:white; border:none; padding:14px; border-radius:10px; font-weight:800; cursor:pointer; font-family:inherit; font-size:15px;"><i class="fa-solid fa-paper-plane"></i> KIRIM LINK KE EMAIL</button>' +
+                '<p style="font-size:12px; color:var(--text-light); margin-top:12px; margin-bottom:0;">Link akses akan dikirim ke email yang terdaftar saat mendaftar mitra.</p>' +
+                '</div>' +
+                '</div>';
+        }
+
+        function prosesMintaLink() {
+            const val = document.getElementById('input-minta-link').value.trim();
+            if (!val) return alert("Masukkan Email atau ID Mitra!");
+
+            // Ambil draft ID dari localStorage (jika ada dari sesi Studio sebelumnya)
+            const draftId = localStorage.getItem('masprinto_draft_id') || "";
+
+            showLoading('Mengirim Link Akses...');
+            google.script.run.withSuccessHandler(res => {
+                hideLoading();
+                alert(res.message);
+            }).sendDashboardLink(val, draftId);
+        }
+
+        function renderUI() {
+            const esc = (str) => String(str).replace(/[&<>"']/g, m => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[m]));
+            document.getElementById('dash-view').style.display = 'block';
+            const m = dashboardData.mitra;
+            const s = dashboardData.stats;
+
+            document.getElementById('shop-name-title').innerText = m.namaToko;
+            document.getElementById('mitra-id-label').innerText = "ID Mitra: " + m.idMitra + " | WA: " + m.wa;
+
+            document.getElementById('stat-orders').innerText = s.totalOrder;
+            document.getElementById('stat-profit').innerText = "Rp " + s.totalProfit.toLocaleString('id-ID');
+            document.getElementById('stat-hutang').innerText = "Rp " + s.totalHutang.toLocaleString('id-ID');
+
+            document.getElementById('info-mitra-bank').innerText = m.bankName || "-";
+            document.getElementById('info-mitra-acc').innerText = m.bankAcc || "-";
+            document.getElementById('info-mitra-owner').innerText = m.bankOwner || "-";
+            const stNama = document.getElementById('settings-nama');
+            if (stNama) stNama.value = m.namaToko || "-";
+            const stEmail = document.getElementById('settings-email');
+            if (stEmail) stEmail.value = m.email || "-";
+            const stWa = document.getElementById('settings-wa');
+            if (stWa) stWa.value = m.wa || "-";
+            const stBank = document.getElementById('settings-bank');
+            if (stBank) stBank.value = m.bankName || "-";
+            const stAcc = document.getElementById('settings-acc');
+            if (stAcc) stAcc.value = m.bankAcc || "";
+            const stOwner = document.getElementById('settings-owner');
+            if (stOwner) stOwner.value = m.bankOwner || "";
+            const stAlamat = document.getElementById('settings-alamat');
+            if (stAlamat) stAlamat.value = m.alamat || "";
+
+            const body = document.getElementById('orders-body');
+            body.innerHTML = "";
+
+            dashboardData.orders.forEach(o => {
+                let payClass = (o.statusBayar === "Lunas") ? "pill-lunas" : "pill-pending";
+
+                let prodClass = "prod-antrian";
+                if (o.progress.toLowerCase().includes('proses')) prodClass = "prod-proses";
+                if (o.progress.toLowerCase().includes('kirim')) prodClass = "prod-kirim";
+                if (o.progress.toLowerCase().includes('selesai')) prodClass = "prod-selesai";
+
+                let proofCenter = o.buktiBayarPusat || "-";
+                let isLunasPusat = (proofCenter !== "-");
+
+                body.innerHTML +=
+                    '<tr>' +
+                    '<td style="color:var(--text-light);">' + esc(o.tanggal) + '</td>' +
+                    '<td style="font-weight:700; color:var(--primary);">' + esc(o.invoice) + '</td>' +
+                    '<td><strong>' + esc(o.customer) + '</strong></td>' +
+                    '<td>' +
+                    '<div style="min-width:130px;">' +
+                    '<select onchange="updateStatus(this, \'' + o.invoice + '\')" class="status-pill ' + payClass + '">' +
+                    '<option value="Belum Diperiksa" ' + (o.statusBayar === 'Belum Diperiksa' ? 'selected' : '') + '>BELUM DIPERIKSA</option>' +
+                    '<option value="Belum Lunas" ' + (o.statusBayar === 'Belum Lunas' ? 'selected' : '') + '>BELUM LUNAS</option>' +
+                    '<option value="Lunas" ' + (o.statusBayar === 'Lunas' ? 'selected' : '') + '>LUNAS</option>' +
+                    '<option value="Pembayaran Ditolak" ' + (o.statusBayar === 'Pembayaran Ditolak' ? 'selected' : '') + '>PEMBAYARAN DITOLAK</option>' +
+                    '</select>' +
+                    '</div>' +
+                    '</td>' +
+                    '<td><span class="prod-pill ' + prodClass + '">' + esc(o.progress) + '</span></td>' +
+                    '<td><small>' + esc(o.resi || "-") + '</small></td>' +
+                    '<td style="color:var(--success); font-weight:700;">+Rp' + o.profitMitra.toLocaleString('id-ID') + '</td>' +
+                    '<td style="color:var(--danger); font-weight:700;">Rp' + o.subtotalMasprinto.toLocaleString('id-ID') + '</td>' +
+                    '<td>' +
+                    '<div style="display:flex; gap:5px;">' +
+                    (isLunasPusat ?
+                        '<span class="btn-action btn-status" title="Sudah Bayar ke Pusat"><i class="fa-solid fa-check-double"></i> Lunas</span>' :
+                        '<button class="btn-action btn-pay" onclick="openPayModal(\'' + o.invoice + '\', ' + o.subtotalMasprinto + ')" title="Bayar ke Pusat"><i class="fa-solid fa-upload"></i> Bayar</button>'
+                    ) +
+                    '<button class="btn-action btn-detail" onclick="deleteOrder(\'' + esc(o.invoice) + '\')" title="Hapus Pesanan"><i class="fa-solid fa-trash"></i></button>' +
+                    '</div>' +
+                    '<div style="display:flex; gap:5px; margin-top:6px;">' +
+                    '<button class="btn-action btn-detail" onclick="openDetailModal(\'' + esc(o.invoice) + '\')" title="Detail Pesanan"><i class="fa-solid fa-list"></i> Detail</button>' +
+                    '<button class="btn-action btn-copy" onclick="openTrackModal(\'' + esc(o.invoice) + '\')" title="Tracking"><i class="fa-solid fa-location-dot"></i> Tracking</button>' +
+                    '<button class="btn-action btn-view" onclick="safeOpenLink(\'' + o.buktiBayarCust + '\')" title="Bukti Pembeli"><i class="fa-solid fa-image"></i> Bukti</button>' +
+                    '</div>' +
+                    '</td>' +
+                    '</tr>';
+            });
+
+            // RENDER DESIGNS
+            const dBody = document.getElementById('designs-body');
+            dBody.innerHTML = "";
+            
+            if (!dashboardData.designs || dashboardData.designs.length === 0) {
+                dBody.innerHTML = '<tr><td colspan="5" style="text-align:center; padding: 40px; color: var(--text-light);">Belum ada desain di katalog Anda. Silakan buat desain baru di Masprinto Studio.</td></tr>';
+            } else {
+                dashboardData.designs.forEach(d => {
+                    let dateStr = "-";
+                    try {
+                        if (d.tanggal instanceof Date) {
+                             dateStr = d.tanggal.toLocaleDateString('id-ID', { day:'2-digit', month:'short', year:'numeric' });
+                        } else if (d.tanggal) {
+                             const parsed = new Date(d.tanggal);
+                             if (!isNaN(parsed.getTime())) {
+                                dateStr = parsed.toLocaleDateString('id-ID', { day:'2-digit', month:'short', year:'numeric' });
+                             } else {
+                                dateStr = String(d.tanggal);
+                             }
+                         }
+                    } catch(e) {}
+
+                    dBody.innerHTML += `
+                        <tr>
+                            <td style="color:var(--text-light);">${esc(dateStr)}</td>
+                            <td style="font-weight:700; color:var(--primary);">${esc(d.id)}</td>
+                            <td><span class="prod-pill prod-proses">${esc(d.kode)}</span></td>
+                            <td><span class="prod-pill prod-selesai">${esc(d.status || 'Active')}</span></td>
+                            <td>
+                                <div style="display:flex; gap:10px;">
+                                    <button onclick="jualDesain('${d.id}', '${d.pin}')" class="btn-action btn-pay" style="padding: 10px 15px; border-radius: 10px; background: #0ea5e9; color: white; border: none;">
+                                        <i class="fa-solid fa-store"></i> JUAL DI TOKO
+                                    </button>
+                                    <button onclick="orderCustomDesain('${d.id}', '${d.pin}')" class="btn-action btn-view" style="padding: 10px 15px; border-radius: 10px; border: 1px solid #dbeafe;">
+                                        <i class="fa-solid fa-cart-shopping"></i> ORDER KUSTOM
+                                    </button>
+                                    <button onclick="safeOpenLink('${d.folder}')" class="btn-action btn-copy" style="padding: 10px 15px; border-radius: 10px;">
+                                        <i class="fa-solid fa-folder-open"></i> DRIVE
+                                    </button>
+                                    <button onclick="deleteDesign('${d.id}')" class="btn-action btn-detail" style="padding: 10px 15px; border-radius: 10px;">
+                                        <i class="fa-solid fa-trash"></i> HAPUS
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                    `;
+                });
+            }
+
+            // RENDER PRODUCTS
+            renderProductsTable();
+
+            // RENDER REPORTS
+            const rp = document.getElementById('report-products');
+            if (rp) rp.innerText = (s.totalProducts || 0);
+            const rd = document.getElementById('report-designs');
+            if (rd) rd.innerText = (s.totalDesigns || 0);
+            const rom = document.getElementById('report-orders-month');
+            if (rom) rom.innerText = (s.totalOrder || 0);
+            const rpf = document.getElementById('report-profit');
+            if (rpf) rpf.innerText = "Rp " + (s.totalProfit || 0).toLocaleString('id-ID');
+        }
+
+        function jualDesain(id, pin) {
+            const design = (dashboardData && dashboardData.designs || []).find(d => d.id === id);
+            activeSellDesign = {
+                id: id,
+                pin: pin,
+                kode: design ? (design.kode || "") : ""
+            };
+            sellMode = "create";
+            document.getElementById('sell-design-id').innerText = id;
+            document.getElementById('sell-kode').value = activeSellDesign.kode || "";
+            document.getElementById('sell-kode').readOnly = true;
+            document.getElementById('sell-kode').style.backgroundColor = '#e2e8f0';
+            document.getElementById('sell-kain').value = "30s";
+            document.getElementById('sell-warna').value = "Hitam";
+            document.getElementById('sell-warna-lain').value = "";
+            toggleSellWarnaLain();
+            document.getElementById('sell-profit').value = "20000";
+            document.getElementById('btn-submit-sell').innerText = "Simpan Produk";
+            openModal('modal-sell-design');
+        }
+
+        function submitSellDesign() {
+            if (!activeSellDesign || !activeSellDesign.id) return alert("Desain tidak valid.");
+            const btn = document.getElementById('btn-submit-sell');
+            btn.disabled = true;
+            btn.innerText = "Menyimpan...";
+            const payload = {
+                idDesain: activeSellDesign.id,
+                kodeSablon: document.getElementById('sell-kode').value.trim(),
+                kain: document.getElementById('sell-kain').value,
+                warnaFix: (document.getElementById('sell-warna').value === 'Lainnya')
+                    ? document.getElementById('sell-warna-lain').value.trim()
+                    : document.getElementById('sell-warna').value,
+                profit: Number(document.getElementById('sell-profit').value || 0)
+            };
+            if (!payload.warnaFix) return alert("Warna wajib diisi.");
+            const done = (res) => {
+                btn.disabled = false;
+                btn.innerText = "Simpan Produk";
+                if (res && res.status === "Sukses") {
+                    closeModal('modal-sell-design');
+                    loadDashboard();
+                    switchTab('products');
+                    alert("Produk berhasil disimpan ke katalog Anda.");
+                } else {
+                    alert((res && res.message) ? res.message : "Gagal menyimpan produk.");
+                }
+            };
+            const fail = (err) => {
+                btn.disabled = false;
+                btn.innerText = "Simpan Produk";
+                alert("Error: " + err);
+            };
+            if (sellMode === "edit") {
+                google.script.run.withSuccessHandler(done).withFailureHandler(fail).updateProdukMitra(TOKEN, SESSION_TOKEN, payload);
+            } else {
+                google.script.run.withSuccessHandler(done).withFailureHandler(fail).createProdukFromDesain(TOKEN, SESSION_TOKEN, payload);
+            }
+        }
+
+        function editProduct(idDesain) {
+            const products = (dashboardData && dashboardData.products) ? dashboardData.products : [];
+            const p = products.find(x => String(x.idDesain) === String(idDesain));
+            if (!p) return alert("Produk tidak ditemukan.");
+            activeSellDesign = { id: p.idDesain };
+            sellMode = "edit";
+            document.getElementById('sell-design-id').innerText = p.idDesain || "-";
+            document.getElementById('sell-kode').value = p.kodeSablon || "";
+            document.getElementById('sell-kode').readOnly = true;
+            document.getElementById('sell-kode').style.backgroundColor = '#e2e8f0';
+            document.getElementById('sell-kain').value = p.kainDefault || "30s";
+            const warna = p.warnaDefault || "Hitam";
+            if (["Hitam", "Putih", "Navy", "Lainnya"].indexOf(warna) === -1) {
+                document.getElementById('sell-warna').value = "Lainnya";
+                document.getElementById('sell-warna-lain').value = warna;
+            } else {
+                document.getElementById('sell-warna').value = warna;
+                document.getElementById('sell-warna-lain').value = "";
+            }
+            toggleSellWarnaLain();
+            document.getElementById('sell-profit').value = String(Number(p.profit) || 0);
+            document.getElementById('btn-submit-sell').innerText = "Update Produk";
+            openModal('modal-sell-design');
+        }
+
+        function toggleSellWarnaLain() {
+            const w = document.getElementById('sell-warna').value;
+            document.getElementById('sell-warna-lain-box').style.display = (w === 'Lainnya') ? 'block' : 'none';
+        }
+
+        function deactivateProduct(idDesain) {
+            masprintoConfirm("Nonaktifkan produk ini?", function () {
+                showLoading('Memproses Produk...');
+                google.script.run.withSuccessHandler(res => {
+                    hideLoading();
+                    if (res && res.status === "Sukses") {
+                        loadDashboard();
+                        switchTab('products');
+                        alert("Produk dinonaktifkan.");
+                    } else {
+                        alert((res && res.message) ? res.message : "Gagal menonaktifkan produk.");
+                    }
+                }).withFailureHandler(err => {
+                    hideLoading();
+                    alert("Error: " + err);
+                }).updateProdukMitraStatus(TOKEN, SESSION_TOKEN, idDesain, "Nonaktif");
+            }, { okText: "Ya, Nonaktifkan", cancelText: "Batal", type: "warning", iconHtml: '<i class="fa-solid fa-ban"></i>' });
+        }
+
+        function activateProduct(idDesain) {
+            showLoading('Memproses Produk...');
+            google.script.run.withSuccessHandler(res => {
+                hideLoading();
+                if (res && res.status === "Sukses") {
+                    loadDashboard();
+                    switchTab('products');
+                    alert("Produk diaktifkan kembali.");
+                } else {
+                    alert((res && res.message) ? res.message : "Gagal mengaktifkan produk.");
+                }
+            }).withFailureHandler(err => {
+                hideLoading();
+                alert("Error: " + err);
+            }).updateProdukMitraStatus(TOKEN, SESSION_TOKEN, idDesain, "Active");
+        }
+
+        function renderProductsTable() {
+            const esc = (str) => String(str).replace(/[&<>"']/g, m => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[m]));
+            const pBody = document.getElementById('products-body');
+            if (!pBody || !dashboardData) return;
+            pBody.innerHTML = "";
+            const products = dashboardData.products || [];
+            const filterEl = document.getElementById('product-filter');
+            const filterVal = (filterEl ? filterEl.value : "all").toLowerCase();
+            const filtered = products.filter(p => {
+                const st = String(p.status || "Active").toLowerCase();
+                if (filterVal === "active") return st === "active";
+                if (filterVal === "nonaktif") return st === "nonaktif";
+                return true;
+            });
+
+            if (!filtered.length) {
+                pBody.innerHTML = '<tr><td colspan="7" style="text-align:center; padding:30px; color: var(--text-light);">Tidak ada produk pada filter ini.</td></tr>';
+                return;
+            }
+
+            filtered.forEach(p => {
+                const link = BASE_URL + "?page=shop&mid=" + dashboardData.mitra.idMitra + "&id=" + encodeURIComponent(p.idDesain || "");
+                const isActive = String(p.status || "Active").toLowerCase() === "active";
+                const statusBadge = isActive
+                    ? '<span class="prod-pill prod-selesai">Active</span>'
+                    : '<span class="prod-pill prod-antrian">Nonaktif</span>';
+                const actionBtn = isActive
+                    ? `<button class="btn-action btn-detail" onclick="deactivateProduct('${esc(p.idDesain || '')}')"><i class="fa-solid fa-ban"></i> NONAKTIFKAN</button>`
+                    : `<button class="btn-action btn-status" onclick="activateProduct('${esc(p.idDesain || '')}')"><i class="fa-solid fa-rotate-left"></i> AKTIFKAN</button>`;
+                pBody.innerHTML += `
+                    <tr>
+                        <td style="font-weight:700; color:var(--primary);">${esc(p.idDesain || '-')}</td>
+                        <td>${esc(p.kodeSablon || '-')}</td>
+                        <td>${esc(p.kainDefault || '-')}</td>
+                        <td>${esc(p.warnaDefault || '-')}</td>
+                        <td style="color:var(--success); font-weight:700;">Rp ${(Number(p.profit) || 0).toLocaleString('id-ID')}</td>
+                        <td>${statusBadge}</td>
+                        <td>
+                            <div style="display:flex; gap:6px; flex-wrap:wrap;">
+                                <button class="btn-action btn-copy" onclick="navigator.clipboard.writeText('${link}'); alert('Link produk disalin!')"><i class="fa-solid fa-link"></i> COPY LINK</button>
+                                <button class="btn-action btn-view" onclick="editProduct('${esc(p.idDesain || '')}')"><i class="fa-solid fa-pen"></i> EDIT</button>
+                                ${actionBtn}
+                            </div>
+                        </td>
+                    </tr>`;
+            });
+        }
+
+        function orderCustomDesain(id, pin) {
+            // Ke GAS 2 untuk order custom spesifikasi
+            const activeToken = TOKEN || (dashboardData && dashboardData.mitra ? dashboardData.mitra.token : "");
+            const url = BASE_URL + "?page=order&id=" + id + "&token=" + encodeURIComponent(activeToken) + "&returnTo=dashboard";
+            window.open(url, '_self');
+        }
+
+        function deleteDesign(id) {
+            masprintoConfirm("Hapus desain ini dari katalog Anda?", function () {
+                showLoading('Menghapus Desain...');
+                google.script.run.withSuccessHandler(res => {
+                    hideLoading();
+                    if (res && res.status === "Sukses") {
+                        loadDashboard();
+                        switchTab('designs');
+                        alert("Desain berhasil dihapus.");
+                    } else {
+                        alert((res && res.message) ? res.message : "Gagal menghapus desain.");
+                    }
+                }).withFailureHandler(err => {
+                    hideLoading();
+                    alert("Error: " + err);
+                }).deleteMitraDesign(TOKEN, SESSION_TOKEN, id);
+            }, { okText: "Ya, Hapus", cancelText: "Batal", type: "danger", iconHtml: '<i class="fa-solid fa-trash"></i>' });
+        }
+
+        function deleteOrder(inv) {
+            masprintoConfirm("Hapus pesanan ini dari riwayat?", function () {
+                showLoading('Menghapus Pesanan...');
+                google.script.run.withSuccessHandler(res => {
+                    hideLoading();
+                    if (res && res.status === "Sukses") {
+                        loadDashboard();
+                        switchTab('orders');
+                        alert("Pesanan dihapus dari riwayat.");
+                    } else {
+                        alert((res && res.message) ? res.message : "Gagal menghapus pesanan.");
+                    }
+                }).withFailureHandler(err => {
+                    hideLoading();
+                    alert("Error: " + err);
+                }).deleteMitraOrder(TOKEN, SESSION_TOKEN, inv);
+            }, { okText: "Ya, Hapus Pesanan", cancelText: "Batal", type: "danger", iconHtml: '<i class="fa-solid fa-trash-can"></i>' });
+        }
+
+        function openTrackModal(inv) {
+            document.getElementById('track-content').innerText = "Memuat tracking...";
+            openModal('modal-track');
+            google.script.run.withSuccessHandler(res => {
+                if (!res || res.status !== "Sukses") {
+                    document.getElementById('track-content').innerText = (res && res.message) ? res.message : "Gagal memuat tracking.";
+                    return;
+                }
+                const text =
+                    "Invoice: " + (res.invoice || "-") + "\n" +
+                    "Customer: " + (res.customer || "-") + "\n" +
+                    "Status: " + (res.progress || "-") + "\n" +
+                    "Resi: " + (res.resi || "-") + "\n" +
+                    "Update: " + (res.updatedAt || "-") + "\n" +
+                    "Alamat: " + (res.alamat || "-") + "\n" +
+                    "Total: Rp " + Number(res.total || 0).toLocaleString('id-ID');
+                document.getElementById('track-content').innerText = text;
+            }).withFailureHandler(err => {
+                document.getElementById('track-content').innerText = "Error: " + err;
+            }).getOrderTrackingMitra(TOKEN, SESSION_TOKEN, inv);
+        }
+
+        function openDetailModal(inv) {
+            const order = dashboardData.orders.find(o => o.invoice === inv);
+            if (order) {
+                document.getElementById('detail-content').innerText = order.rincian;
+                openModal('modal-detail');
+            }
+        }
+
+        let activePayInvoice = "";
+
+        function openPayModal(inv, amount) {
+            activePayInvoice = inv;
+            document.getElementById('modal-pay-inv').innerText = inv;
+            document.getElementById('modal-pay-amount').innerText = "Rp " + amount.toLocaleString('id-ID');
+            openModal('modal-pay');
+        }
+
+        function openModal(id) {
+            const m = document.getElementById(id);
+            if (!m) return;
+            m.style.display = 'flex';
+            document.body.style.overflow = 'hidden';
+        }
+        function closeModal(id) {
+            const m = document.getElementById(id);
+            if (!m) return;
+            m.style.display = 'none';
+            const opened = Array.from(document.querySelectorAll('.modal')).some(x => x.style.display === 'flex');
+            if (!opened) document.body.style.overflow = '';
+        }
+
+        window.addEventListener('click', function (e) {
+            if (e.target && e.target.classList && e.target.classList.contains('modal')) {
+                e.target.style.display = 'none';
+                const opened = Array.from(document.querySelectorAll('.modal')).some(x => x.style.display === 'flex');
+                if (!opened) document.body.style.overflow = '';
+            }
+        });
+        window.addEventListener('keydown', function (e) {
+            if (e.key !== 'Escape') return;
+            const opened = Array.from(document.querySelectorAll('.modal')).filter(x => x.style.display === 'flex');
+            if (!opened.length) return;
+            opened[opened.length - 1].style.display = 'none';
+            const remains = Array.from(document.querySelectorAll('.modal')).some(x => x.style.display === 'flex');
+            if (!remains) document.body.style.overflow = '';
+        });
+
+        function togglePusatPayment() {
+            const met = document.getElementById('metodeBayarPusat').value;
+            document.getElementById('info-pusat-bank').style.display = (met === 'Transfer Bank') ? 'block' : 'none';
+            document.getElementById('info-pusat-qris').style.display = (met === 'QRIS') ? 'block' : 'none';
+        }
+
+        function safeOpenLink(url) {
+            if (!url || url === "-" || url === "") return alert("Data tidak tersedia.");
+            if (url.startsWith('https://drive.google.com') || url.startsWith('https://')) {
+                window.open(url, '_blank');
+            } else {
+                alert("Tautan tidak aman atau tidak valid.");
+            }
+        }
+
+        function copyShopLink() {
+            if (!dashboardData || !dashboardData.mitra) return;
+            const url = BASE_URL + "?page=shop&mid=" + dashboardData.mitra.idMitra;
+            navigator.clipboard.writeText(url).then(() => {
+                alert("Link Form Order toko Anda berhasil disalin!");
+            }).catch(err => {
+                console.error("Gagal menyalin: ", err);
+                alert("Gagal menyalin link. Silakan salin manual.");
+            });
+        }
+
+        function saveSettings() {
+            const payload = {
+                namaToko: document.getElementById('settings-nama').value.trim(),
+                wa: document.getElementById('settings-wa').value.trim(),
+                bankName: document.getElementById('settings-bank').value.trim(),
+                bankAcc: document.getElementById('settings-acc').value.trim(),
+                bankOwner: document.getElementById('settings-owner').value.trim(),
+                alamat: document.getElementById('settings-alamat').value.trim()
+            };
+            google.script.run.withSuccessHandler(res => {
+                if (res && res.status === "Sukses") {
+                    alert("Pengaturan akun berhasil disimpan.");
+                    loadDashboard();
+                } else {
+                    alert((res && res.message) ? res.message : "Gagal simpan pengaturan.");
+                }
+            }).withFailureHandler(err => {
+                alert("Error: " + err);
+            }).updateMitraSettings(TOKEN, SESSION_TOKEN, payload);
+        }
+
+        function copyOrderLink(invId) {
+            const url = BASE_URL + "?page=shop&mid=" + dashboardData.mitra.idMitra;
+            navigator.clipboard.writeText(url).then(() => alert("Link Form Order disalin!"));
+        }
+
+        function updateStatus(el, inv) {
+            showLoading('Menyimpan Status...');
+            const newStatus = el.value;
+            google.script.run.withSuccessHandler(res => {
+                if (res.status === "Sukses") {
+                    alert("Status pembayaran diupdate!");
+                    loadDashboard();
+                } else {
+                    alert("Gagal: " + res.message);
+                }
+            }).withFailureHandler(err => {
+                hideLoading();
+                alert("Error: " + err);
+            }).updateOrderStatusMitra(TOKEN, SESSION_TOKEN, inv, newStatus);
+        }
+
+        async function confirmPaymentToCenter() {
+            const fileInput = document.getElementById('modal-pay-file');
+            if (!fileInput.files[0]) return alert("Pilih file bukti bayar!");
+
+            const btn = document.getElementById('btn-confirm-pay');
+            btn.disabled = true;
+            btn.innerText = "Mengirim...";
+            showLoading('Mengirim Bukti...');
+
+            const getBase64 = (file) => new Promise((resolve, reject) => {
+                const reader = new FileReader(); reader.readAsDataURL(file);
+                reader.onload = () => resolve({ base64: reader.result.split(',')[1], mime: reader.result.split(';')[0].split(':')[1] });
+                reader.onerror = e => reject(e);
+            });
+
+            try {
+                const fileData = await getBase64(fileInput.files[0]);
+                google.script.run.withSuccessHandler(res => {
+                    hideLoading();
+                    btn.disabled = false;
+                    btn.innerText = "Kirim Bukti";
+                    if (res.status === "Sukses") {
+                        alert("Bukti pembayaran pusat terkirim!");
+                        closeModal('modal-pay');
+                        loadDashboard();
+                    } else {
+                        alert("Gagal: " + res.message);
+                    }
+                }).withFailureHandler(err => {
+                    hideLoading();
+                    btn.disabled = false;
+                    btn.innerText = "Kirim Bukti";
+                    alert("Error: " + err);
+                }).uploadProofPusat(TOKEN, SESSION_TOKEN, activePayInvoice, fileData.base64, fileData.mime);
+            } catch (e) {
+                alert("Error: " + e);
+                btn.disabled = false;
+                hideLoading();
+            }
+        }
+
+        function filterTable() {
+            const input = document.getElementById("order-search");
+            const filter = input.value.toUpperCase();
+            const table = document.getElementById("orders-table");
+            const tr = table.getElementsByTagName("tr");
+
+            for (let i = 1; i < tr.length; i++) {
+                let tdInv = tr[i].getElementsByTagName("td")[1];
+                let tdCust = tr[i].getElementsByTagName("td")[2];
+                if (tdInv || tdCust) {
+                    let txtInv = tdInv.textContent || tdInv.innerText;
+                    let txtCust = tdCust.textContent || tdCust.innerText;
+                    if (txtInv.toUpperCase().indexOf(filter) > -1 || txtCust.toUpperCase().indexOf(filter) > -1) {
+                        tr[i].style.display = "";
+                    } else {
+                        tr[i].style.display = "none";
+                    }
+                }
+            }
+        }
+    </script>
+</body>
+
+</html>

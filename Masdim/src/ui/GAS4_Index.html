@@ -1,0 +1,1074 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <base target="_top">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>
+        <?= (typeof appMode !== 'undefined' && appMode === 'track') ? 'Lacak Pesanan' : 'Order Form' ?>
+    </title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+
+    <?!= include('ui/Global_Style'); ?>
+    <?!= include('ui/Global_Script'); ?>
+    <style>
+        .order-mitra-shell {
+            max-width: 860px;
+            margin: 0 auto;
+        }
+
+        .order-mitra-shell .order-section {
+            background: var(--surface);
+            padding: 28px;
+            border-radius: 18px;
+            box-shadow: 0 8px 20px rgba(15, 23, 42, 0.06);
+            border: 1px solid var(--border);
+            margin-bottom: 22px;
+        }
+
+        .order-mitra-shell .order-section h2 {
+            margin-bottom: 18px;
+            font-size: 20px;
+        }
+        .mitra-step {
+            display: none;
+        }
+        .mitra-step.active {
+            display: block;
+            animation: fadeIn .25s ease;
+        }
+        .step-nav {
+            display: flex;
+            gap: 10px;
+            justify-content: space-between;
+            margin-top: 16px;
+        }
+        .step-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 12px;
+            font-weight: 700;
+            color: var(--primary);
+            background: #eef2ff;
+            border: 1px solid #c7d2fe;
+            border-radius: 999px;
+            padding: 6px 10px;
+            margin-bottom: 12px;
+        }
+        .step-indicator {
+            display: flex;
+            gap: 8px;
+            justify-content: center;
+            margin-bottom: 14px;
+        }
+        .step-indicator .dot {
+            width: 34px;
+            height: 34px;
+            border-radius: 999px;
+            border: 2px solid #cbd5e1;
+            color: #64748b;
+            background: #fff;
+            font-weight: 800;
+            font-size: 13px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .step-indicator .dot.active {
+            background: var(--primary);
+            border-color: var(--primary);
+            color: #fff;
+        }
+        .order-mitra-shell .form-group {
+            margin-bottom: 16px;
+        }
+
+        .order-mitra-shell input,
+        .order-mitra-shell select,
+        .order-mitra-shell textarea {
+            border-radius: 12px;
+            padding: 13px 14px;
+            font-size: 14px;
+        }
+
+        .order-mitra-shell .btn-cart {
+            border-radius: 12px;
+        }
+
+        .order-mitra-shell .cart-box {
+            border-radius: 14px;
+            padding: 16px;
+        }
+
+        .order-mitra-shell #btn-submit {
+            border-radius: 12px;
+            font-weight: 800;
+            letter-spacing: 0.2px;
+        }
+
+        .tracker-card {
+            background: white;
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            margin-top: 20px;
+        }
+
+        .status-badge {
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-weight: bold;
+            font-size: 14px;
+            display: inline-block;
+            margin-top: 10px;
+        }
+
+        .status-antrian {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .status-proses {
+            background: #dbeafe;
+            color: #1e40af;
+        }
+
+        .status-dikirim {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        .status-selesai {
+            background: #ecfdf5;
+            color: #059669;
+        }
+
+        .timeline {
+            position: relative;
+            padding-left: 30px;
+            border-left: 2px dashed #e2e8f0;
+            margin: 20px 0;
+        }
+
+        .timeline-item {
+            position: relative;
+            margin-bottom: 20px;
+        }
+
+        .timeline-item::before {
+            content: "";
+            position: absolute;
+            left: -37px;
+            top: 0;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: var(--primary);
+            border: 3px solid white;
+        }
+
+        /* FIX SCROLL & PREMIUM BACKGROUND */
+        body {
+            height: auto !important;
+            overflow-y: auto !important;
+            min-height: 100vh;
+            display: block !important;
+            background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%) !important;
+            background-attachment: fixed !important;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            width: 100%;
+            max-height: fit-content;
+            box-sizing: border-box;
+            margin: 0 auto;
+            padding: 50px 15px;
+            min-height: 100vh;
+            overflow: visible !important;
+            background: transparent !important;
+        }
+
+        .order-section {
+            background: white;
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.05);
+            margin-bottom: 40px;
+            border: 1px solid rgba(255, 255, 255, 0.8);
+        }
+
+        @media (max-width: 768px) {
+            .order-mitra-shell .order-section {
+                padding: 18px 14px;
+                border-radius: 14px;
+            }
+
+            .order-mitra-shell .order-section h2 {
+                font-size: 17px;
+            }
+
+            .container {
+                padding: 20px 10px;
+            }
+
+            .order-section {
+                padding: 20px 15px;
+                border-radius: 12px;
+                margin-bottom: 25px;
+            }
+
+            .tracker-card {
+                padding: 15px;
+            }
+
+            h1 {
+                font-size: 22px !important;
+            }
+
+            .timeline {
+                padding-left: 20px;
+            }
+
+            .timeline-item::before {
+                left: -27px;
+            }
+        }
+    </style>
+</head>
+
+<body class="scroll-layout">
+    <div id="toast-wrap"></div>
+
+    <div class="container" id="main-container">
+        <div id="system-loading">
+            <div class="spinner"></div>
+            <h3 style="margin:0; font-size: 18px; color: var(--text);" id="loading-title">Menghubungkan ke Server...
+            </h3>
+        </div>
+
+        <!-- UI TRACKER -->
+        <div id="tracker-view" style="display:none;">
+            <div style="text-align: center; margin-bottom: 30px;">
+                <h1 style="margin-bottom: 10px;">Lacak Pesanan</h1>
+                <p style="color: var(--text-light);">Pantau status produksi dan pengiriman pesanan Anda secara
+                    real-time.</p>
+            </div>
+
+            <div style="display: flex; gap: 10px; margin-bottom: 20px; align-items: stretch; flex-wrap: wrap;">
+                <div class="form-group" style="flex: 2; min-width: 200px; margin-bottom: 0;">
+                    <input type="text" id="track-input" placeholder="Invoice (Contoh: INV-1234)"
+                        value="<?= (typeof trackId !== 'undefined') ? trackId : '' ?>" style="height: 50px;">
+                </div>
+                <button type="button" onclick="lakukanTracking()" style="width: auto; padding: 0 25px; height: 50px;"><i
+                        class="fa-solid fa-magnifying-glass"></i> Lacak Sekarang</button>
+            </div>
+
+            <div class="info-box info-blue" style="text-align:center; padding: 15px;">
+                <p style="margin:0; font-size:13px;"><i class="fa-solid fa-envelope"></i> Lupa nomor WA atau link tidak
+                    bisa dibuka?
+                    <span onclick="mintaLinkPelacakan()"
+                        style="color:var(--primary); text-decoration:underline; cursor:pointer; font-weight:700;">Kirim
+                        ulang link akses ke Email saya</span>
+                </p>
+            </div>
+
+            <div id="track-result" style="display: none;"></div>
+        </div>
+
+        <!-- UI ORDER MITRA (WHITE LABEL) -->
+        <div id="order-mitra-view" style="display:none;">
+            <div style="text-align: center; margin-bottom: 30px;">
+                <h1 id="shop-name-title" style="margin-bottom: 10px;">Form Pemesanan</h1>
+                <p id="mitra-welcome" style="color: var(--text-light);">Menyiapkan sistem...</p>
+            </div>
+
+            <div id="form-content" class="order-mitra-shell" style="display: none;">
+                <div class="step-indicator" id="mitra-step-indicator">
+                    <span class="dot active">1</span>
+                    <span class="dot">2</span>
+                    <span class="dot">3</span>
+                </div>
+                <div class="info-box info-blue" id="mitra-info-box" style="display:none;">
+                    <i class="fa-solid fa-store"></i> <strong id="shop-name">...</strong>
+                </div>
+                <div class="info-box info-yellow" style="margin-bottom: 20px;">
+                    <span><i class="fa-solid fa-circle-info"></i> Alur pemesanan ini disederhanakan untuk mitra: isi data penerima, pilih jumlah, cek ongkir, lalu upload bukti pembayaran.</span>
+                </div>
+
+                <form id="mitraForm">
+                    <div class="mitra-step active" id="mitra-step-1">
+                    <div class="order-section">
+                        <div class="step-badge"><i class="fa-solid fa-list-check"></i> Step 1 dari 3</div>
+                        <h2><i class="fa-solid fa-user-tag"></i> 1. Informasi Klien & Pengiriman</h2>
+                        <div class="form-group">
+                            <label>Nama Lengkap Penerima *</label>
+                            <input type="text" id="cust-nama" placeholder="Contoh: Andi Wijaya" required>
+                            <small style="color:var(--text-light); font-size:11px;">Nama yang akan tertera di label
+                                pengiriman.</small>
+                        </div>
+                        <div class="form-group">
+                            <label>Nomor WhatsApp *</label>
+                            <input type="number" id="cust-wa" placeholder="Contoh: 081234567890" required>
+                            <small style="color:var(--text-light); font-size:11px;">Pastikan nomor aktif untuk
+                                koordinasi kurir.</small>
+                        </div>
+                        <div class="form-group">
+                            <label>Alamat Lengkap Pengiriman *</label>
+                            <textarea id="cust-alamat" rows="2"
+                                placeholder="Contoh: Jl. Sudirman No. 10, RT 01 RW 05, Blok A2" required></textarea>
+                            <small style="color:var(--text-light); font-size:11px;">Tulis alamat sejelas mungkin (No
+                                rumah, Gang, Blok, dll).</small>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Provinsi:</label>
+                            <select id="provinsi" onchange="onProvinsiChange()" required>
+                                <option value="">-- Pilih Provinsi --</option>
+                            </select>
+                        </div>
+
+                        <div class="flex-row">
+                            <div class="form-group flex-1">
+                                <label>Kota / Kabupaten:</label>
+                                <select id="kabupaten" onchange="onKabupatenChange()" required disabled>
+                                    <option value="">-- Pilih Kota/Kab --</option>
+                                </select>
+                                <small style="color:var(--text-light); font-size:11px;">Pilih kota tujuan paket.</small>
+                            </div>
+                            <div class="form-group flex-1">
+                                <label>Kecamatan:</label>
+                                <select id="kecamatan" onchange="resetOngkir()" required disabled>
+                                    <option value="">-- Pilih Kecamatan --</option>
+                                </select>
+                                <small style="color:var(--text-light); font-size:11px;">Pilih kecamatan sesuai
+                                    kota.</small>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Kode POS:</label>
+                            <input type="number" id="kodepos" placeholder="Contoh: 60123">
+                            <small style="color:var(--text-light); font-size:11px;">5 digit kode pos alamat
+                                tujuan.</small>
+                        </div>
+                        <div class="step-nav">
+                            <button type="button" onclick="goMitraStep(2)">Lanjut Pilih Produk &raquo;</button>
+                        </div>
+                    </div>
+                    </div>
+
+                    <div class="mitra-step" id="mitra-step-2">
+                    <div class="order-section">
+                        <div class="step-badge"><i class="fa-solid fa-list-check"></i> Step 2 dari 3</div>
+                        <h2><i class="fa-solid fa-shirt"></i> 2. Spesifikasi Produk</h2>
+                        <!-- Hidden Inputs for Mitra defaults -->
+                        <input type="hidden" id="kain">
+                        <input type="hidden" id="warna">
+
+                        <div class="flex-row">
+                            <div class="form-group flex-1"><label>Ukuran Kaos</label><select id="size"
+                                    onchange="hitungTotal()">
+                                    <option>S</option>
+                                    <option>M</option>
+                                    <option>L</option>
+                                    <option>XL</option>
+                                    <option>XXL</option>
+                                </select></div>
+                            <div class="form-group flex-1"><label>Model Lengan</label><select id="lengan"
+                                    onchange="hitungTotal()">
+                                    <option>Pendek</option>
+                                    <option>Panjang</option>
+                                </select></div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Jumlah Pesanan (pcs)</label>
+                            <input type="number" id="qty" min="1" value="1" placeholder="Contoh: 1"
+                                onchange="hitungTotal(); resetOngkir();">
+                            <small style="color:var(--text-light); font-size:11px;">Berapa banyak kaos yang ingin
+                                dipesan?</small>
+                        </div>
+
+                        <div id="item-price-preview"
+                            style="background:#f1f5f9; padding:12px; border-radius:10px; font-size:13px; margin-bottom:15px; border-left:4px solid var(--primary);">
+                            Estimasi Item: <strong>Rp <span id="item-subtotal-display">0</span></strong>
+                        </div>
+
+                        <button type="button" onclick="tambahKeKeranjang()" class="btn-cart"
+                            style="background:var(--bg); color:var(--primary); border:1.5px dashed var(--primary); width:100%; margin-bottom:20px; font-weight:bold; padding:12px;"><i
+                                class="fa-solid fa-cart-plus"></i> TAMBAH KE KERANJANG</button>
+
+                        <div id="cart-items-list" style="margin-bottom:20px;">
+                            <!-- List Item Keranjang Akan Muncul Di Sini -->
+                        </div>
+
+                        <div class="cart-box"
+                            style="background: #f8fafc; border: 1px dashed var(--primary); margin-top:20px;">
+                            <h3 style="margin-top:0; font-size:15px; color: var(--primary); border-bottom: 2px solid var(--border); padding-bottom: 10px; display:flex; align-items:center; gap:8px;">
+                                <i class="fa-solid fa-clipboard-list"></i> Ringkasan Belanja
+                            </h3>
+                            <div id="review-mini-cart" style="font-size:12px; color:var(--text-light); margin-bottom:10px;">Belum ada item.</div>
+                            <div style="display:flex; justify-content:space-between; margin-bottom:8px;"><span>Ongkos
+                                    Kirim:</span> <strong>Rp <span id="ongkir-display">0</span></strong></div>
+                            <div
+                                style="display:flex; justify-content:space-between; font-size:18px; color: var(--primary);">
+                                <span>Total Pembayaran:</span> <strong>Rp <span id="total-display">0</span></strong>
+                            </div>
+                            <button type="button" onclick="cekOngkir()"
+                                style="margin-top:10px; padding:12px; width:100%;"><i class="fa-solid fa-truck"></i>
+                                Hitung Ongkir</button>
+                        </div>
+                        <div class="step-nav">
+                            <button type="button" class="btn-secondary" onclick="goMitraStep(1)">Kembali</button>
+                            <button type="button" onclick="goMitraStep(3)">Lanjut Pembayaran &raquo;</button>
+                        </div>
+                    </div>
+                    </div>
+
+                    <div class="mitra-step" id="mitra-step-3">
+                    <div class="order-section">
+                        <div class="step-badge"><i class="fa-solid fa-list-check"></i> Step 3 dari 3</div>
+                        <h2><i class="fa-solid fa-credit-card"></i> 3. Pembayaran & Konfirmasi</h2>
+
+                        <div id="mitra-payment-box" style="display:none; margin-bottom:20px;">
+                            <div class="info-box info-blue" style="text-align:center;">
+                                <p style="margin-bottom:10px; font-size:13px;">Silakan lakukan pembayaran ke rekening
+                                    toko kami:</p>
+                                <div
+                                    style="background:rgba(255,255,255,0.7); padding:15px; border-radius:10px; border:1.5px solid var(--primary);">
+                                    <strong id="display-bank-name"
+                                        style="display:block; font-size:14px; text-transform:uppercase;">-</strong>
+                                    <strong id="display-bank-acc"
+                                        style="display:block; font-size:22px; color:var(--primary); margin:5px 0;">-</strong>
+                                    <span id="display-bank-owner"
+                                        style="display:block; font-size:13px; color:var(--text-light);">A/n -</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="info-box info-yellow" style="font-size:13px; margin-bottom:15px;">
+                            Pastikan nominal transfer sesuai dengan <strong>Total Pembayaran</strong> di atas. Upload
+                            bukti bayar di bawah ini.
+                        </div>
+
+                        <div class="form-group">
+                            <label>Upload Bukti Bayar *</label>
+                            <input type="file" id="bukti" accept="image/*" required>
+                        </div>
+
+                        <button type="button" id="btn-submit" onclick="submitOrderMitra()"
+                            style="margin-top:20px; font-size:18px; width:100%; background: var(--success);">KONFIRMASI & PROSES PESANAN</button>
+                        <div class="step-nav">
+                            <button type="button" class="btn-secondary" onclick="goMitraStep(2)">Kembali ke Produk</button>
+                        </div>
+                    </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Data dari Server (JSON Safe Injection) -->
+    <div id="server-data-json" style="display:none;">
+        <?!= JSON.stringify({
+            mode: (typeof appMode !== 'undefined') ? appMode : 'track',
+            token: (typeof token !== 'undefined') ? token : '',
+            idMitra: (typeof idMitra !== 'undefined') ? idMitra : '',
+            idOrder: (typeof idOrder !== 'undefined') ? idOrder : '',
+            trackId: (typeof trackId !== 'undefined') ? trackId : '',
+            baseUrl: (typeof baseUrl !== 'undefined') ? baseUrl : '',
+            sessionToken: (typeof sessionToken !== 'undefined' ? sessionToken : '')
+        }) ?>
+    </div>
+
+    <script>
+        const serverData = JSON.parse(document.getElementById('server-data-json').textContent);
+        const MODE = serverData.mode;
+        const TOKEN = serverData.token;
+        const ID_MITRA = serverData.idMitra;
+        const ID_ORDER = serverData.idOrder;
+        const TRACK_ID = serverData.trackId;
+        const BASE_URL = serverData.baseUrl;
+        const SESSION_TOKEN = serverData.sessionToken;
+
+        let dbWilayah = null;
+        let pricing = null;
+        let mitraInfo = null;
+        let designInfo = null;
+        let cartItems = [];
+        let tarifOngkir = 0;
+        
+        function showLoading(title) {
+            const loadingEl = document.getElementById('system-loading');
+            const titleEl = document.getElementById('loading-title');
+            if (titleEl) titleEl.innerText = title || 'Loading ...';
+            if (loadingEl) loadingEl.style.display = 'flex';
+        }
+        function hideLoading() {
+            const loadingEl = document.getElementById('system-loading');
+            if (loadingEl) loadingEl.style.display = 'none';
+        }
+        window.alert = window.masprintoAlert;
+
+        window.onload = function () {
+            if (MODE === 'track') {
+                document.getElementById('tracker-view').style.display = 'block';
+                hideLoading();
+                if (TRACK_ID) lakukanTracking();
+            } else {
+                document.getElementById('order-mitra-view').style.display = 'block';
+                inisialisasiOrderMitra();
+            }
+        };
+
+        // --- LOGIKA TRACKING ---
+        function lakukanTracking() {
+            const inputEl = document.getElementById('track-input');
+            const inv = inputEl ? inputEl.value.trim() : TRACK_ID;
+
+            // waSuffixOrToken can be the token from URL/Server (TOKEN) or 4 digits WA
+            // Prioritize TOKEN from server data (Magic Link)
+            let waSuffixOrToken = TOKEN || "";
+
+            if (!inv) return alert("Masukkan No. Invoice");
+
+            if (!waSuffixOrToken) {
+                waSuffixOrToken = prompt("Demi keamanan, masukkan 4 digit terakhir nomor WA saat memesan:");
+                if (!waSuffixOrToken) return;
+            }
+
+            showLoading('Memuat Tracking...');
+
+            google.script.run.withSuccessHandler(res => {
+                const esc = (str) => String(str).replace(/[&<>"']/g, m => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[m]));
+                hideLoading();
+                const resultDiv = document.getElementById('track-result');
+                if (!resultDiv) return;
+                resultDiv.style.display = 'block';
+
+                if (res.status === "Sukses") {
+                    let badgeClass = "status-antrian";
+                    if (res.progress.toLowerCase().includes('proses')) badgeClass = "status-proses";
+                    if (res.progress.toLowerCase().includes('kirim')) badgeClass = "status-dikirim";
+                    if (res.progress.toLowerCase().includes('selesai')) badgeClass = "status-selesai";
+
+                    // Sanitasi Tampilan Tracking (White Label)
+                    let displayAlamat = res.alamat;
+                    if (res.isWhiteLabel) {
+                        displayAlamat = displayAlamat.replace(/\[DROPSHIP\]/g, "")
+                            .replace(/PENGIRIM:.*?\n/g, "")
+                            .replace(/PENERIMA:/g, "PENERIMA:")
+                            .replace(/\[MITRA ORDER\]/g, "")
+                            .trim();
+                    }
+
+                    // Bersihkan Rincian Produk (Sembunyikan Kode Sablon & Area)
+                    let cleanRincian = String(res.rincian || "").split("\n").filter(Boolean).map(line => {
+                        return line.split(" | Sablon:")[0]; // Ambil bagian produk saja
+                    }).join("<br>• ") || "-";
+
+                    resultDiv.innerHTML = `
+                        <div class="tracker-card">
+                            <div style="display:flex; justify-content:space-between; align-items:flex-start;">
+                                <div>
+                                    <h3 style="margin:0; color:var(--primary);">${esc(res.invoice)}</h3>
+                                    <p style="font-size:11px; color:var(--text-light); margin:5px 0;">Pembaruan: ${esc(res.update)}</p>
+                                </div>
+                                <div class="status-badge ${badgeClass}">${esc(res.progress)}</div>
+                            </div>
+                            <hr style="border:0; border-top:1px solid #f1f5f9; margin:15px 0;">
+                            <div style="font-size:14px; line-height:1.6;">
+                                <div style="margin-bottom:10px;"><strong style="color:var(--text-light); font-size:12px; display:block; text-transform:uppercase;">Penerima Paket</strong> ${esc(res.nama)}</div>
+                                <div style="margin-bottom:10px;"><strong style="color:var(--text-light); font-size:12px; display:block; text-transform:uppercase;">Alamat Pengiriman</strong> ${esc(displayAlamat).replace(/\n/g, '<br>')}</div>
+                                <div style="margin-bottom:10px;"><strong style="color:var(--text-light); font-size:12px; display:block; text-transform:uppercase;">Daftar Produk</strong> • ${cleanRincian}</div>
+                                <div style="margin-bottom:10px;"><strong style="color:var(--text-light); font-size:12px; display:block; text-transform:uppercase;">Informasi Biaya</strong> Rp ${Number(res.total).toLocaleString('id-ID')} (Sudah termasuk Ongkir)</div>
+                                <div style="margin-bottom:10px;"><strong style="color:var(--text-light); font-size:12px; display:block; text-transform:uppercase;">Nomor Resi</strong> 
+                                    ${res.isMarketplace && res.resi.startsWith('http') ? `<a href="${esc(res.resi)}" target="_blank" style="color:var(--primary); font-weight:bold; text-decoration:underline;">LIHAT RESI MARKETPLACE</a>` : `<span style="color:var(--primary); font-weight:bold;">${esc(res.resi)}</span>`}
+                                </div>
+                                ${res.isMarketplace && res.catatan ? `<div style="margin-top:15px; padding:10px; background:#f8fafc; border-radius:8px; font-size:12px; border-left:3px solid var(--primary);"><strong>Catatan Pelanggan:</strong><br>${esc(res.catatan).replace("[MARKETPLACE MODE: UNGGAH RESI]", "").trim()}</div>` : ''}
+                            </div>
+                            ${res.resi !== '-' && !res.isMarketplace ? `<a href="https://www.cekresi.com/?noresi=${esc(res.resi)}" target="_blank" style="display:block; text-align:center; background:var(--bg); padding:10px; border-radius:8px; text-decoration:none; color:var(--primary); font-weight:bold; margin-top:15px; border:1px solid var(--primary);">LACAK POSISI KURIR</a>` : ''}
+                        </div>
+                    `;
+                } else {
+                    resultDiv.innerHTML = `<div class="info-box info-yellow" style="text-align:center; padding:30px;"><i class="fa-solid fa-circle-exclamation" style="font-size:30px; margin-bottom:15px; display:block;"></i> ${esc(res.message)}</div>`;
+                }
+            }).withFailureHandler(err => {
+                hideLoading();
+                alert("Error Tracking: " + err.message);
+            }).trackOrder(inv, waSuffixOrToken, SESSION_TOKEN);
+        }
+
+        function mintaLinkPelacakan() {
+            const inv = document.getElementById('track-input').value.trim();
+            if (!inv) return alert("Masukkan No. Invoice terlebih dahulu.");
+
+            masprintoConfirm("Kirim link pelacakan aman ke Email yang terdaftar di pesanan " + inv + "?", function () {
+                showLoading('Mengirim Link Tracking...');
+                google.script.run.withSuccessHandler(res => {
+                    hideLoading();
+                    alert(res.message);
+                }).sendTrackingLink(inv);
+            }, { okText: "Ya, Kirim Link", cancelText: "Batal", type: "info", iconHtml: '<i class="fa-solid fa-paper-plane"></i>' });
+        }
+
+        // --- LOGIKA ORDER MITRA ---
+        function inisialisasiOrderMitra() {
+            const welcomeEl = document.getElementById('mitra-welcome');
+            showLoading('Menyiapkan Form Order...');
+
+            const handleMitraRes = (m) => {
+                if (!m) {
+                    alert("Akses Mitra Ditolak! ID atau Token tidak valid.");
+                    hideLoading();
+                    if (welcomeEl) welcomeEl.innerHTML = "<span style='color:var(--danger);'>Akses Mitra tidak ditemukan.</span>";
+                    return;
+                }
+                mitraInfo = m;
+                const shopNameTitleEl = document.getElementById('shop-name-title');
+                if (shopNameTitleEl) shopNameTitleEl.innerText = m.namaToko;
+                if (welcomeEl) welcomeEl.innerText = "Silakan lengkapi detail pesanan Anda.";
+
+                document.title = m.namaToko + " - Order Form";
+
+                // Set default values
+                const kainEl = document.getElementById('kain');
+                if (kainEl) kainEl.value = m.kainDefault || "30s";
+                const warnaEl = document.getElementById('warna');
+                if (warnaEl) warnaEl.value = m.warnaDefault || "Hitam";
+
+                // Tampilkan Info Rekening Mitra
+                const payBox = document.getElementById('mitra-payment-box');
+                if (payBox && m.bankAcc && m.bankAcc !== "-") {
+                    payBox.style.display = "block";
+                    document.getElementById('display-bank-name').innerText = m.bankName || "BANK";
+                    document.getElementById('display-bank-acc').innerText = m.bankAcc;
+                    document.getElementById('display-bank-owner').innerText = "A/n " + (m.bankOwner || "-");
+                }
+
+                // 2. Validasi status produk aktif/tidak
+                let targetIdOrder = ID_ORDER || m.idOrder;
+                google.script.run.withSuccessHandler(accessRes => {
+                    if (!accessRes || (accessRes.status !== "Sukses")) {
+                        hideLoading();
+                        const msg = (accessRes && accessRes.message) ? accessRes.message : "Link produk sudah tidak aktif.";
+                        if (welcomeEl) welcomeEl.innerHTML = "<span style='color:var(--danger);'>" + msg + "</span>";
+                        return;
+                    }
+
+                    // 3. Ambil Data Desain
+                    if (!targetIdOrder) {
+                        hideLoading();
+                        if (welcomeEl) welcomeEl.innerHTML = "<span style='color:var(--danger);'>ID Desain tidak ditemukan untuk toko ini.</span>";
+                        return;
+                    }
+
+                    google.script.run.withSuccessHandler(d => {
+                        hideLoading();
+                        if (!d) {
+                            alert("Desain tidak ditemukan! Pastikan ID Desain benar.");
+                            if (welcomeEl) welcomeEl.innerHTML = "<span style='color:var(--danger);'>Produk/Desain tidak ditemukan.</span>";
+                            return;
+                        }
+                        designInfo = d;
+                        const contentEl = document.getElementById('form-content');
+                        if (contentEl) contentEl.style.display = 'block';
+
+                        // PANGGIL HARGA SETELAH MITRA INFO ADA
+                        loadSistemDasar();
+                    }).withFailureHandler(err => {
+                        hideLoading();
+                        if (welcomeEl) welcomeEl.innerHTML = `<span style='color:var(--danger);'>Error Desain: ${err.message}</span>`;
+                    }).getDataFromStudio(targetIdOrder);
+                }).withFailureHandler(err => {
+                    hideLoading();
+                    if (welcomeEl) welcomeEl.innerHTML = `<span style='color:var(--danger);'>Error Validasi Produk: ${err.message}</span>`;
+                }).validateMitraProductAccess(m.idMitra, targetIdOrder, TOKEN);
+            };
+
+            // 1. Ambil Data Mitra
+            if (ID_MITRA) {
+                google.script.run.withSuccessHandler(handleMitraRes).withFailureHandler(err => {
+                    hideLoading();
+                    if (welcomeEl) welcomeEl.innerHTML = `<span style='color:var(--danger);'>Error Mitra: ${err.message}</span>`;
+                }).getMitraDataById(ID_MITRA);
+            } else if (TOKEN) {
+                google.script.run.withSuccessHandler(handleMitraRes).withFailureHandler(err => {
+                    hideLoading();
+                    if (welcomeEl) welcomeEl.innerHTML = `<span style='color:var(--danger);'>Error Token: ${err.message}</span>`;
+                }).getMitraDataByToken(TOKEN);
+            } else {
+                hideLoading();
+                if (welcomeEl) welcomeEl.innerHTML = "<span style='color:var(--danger);'>ID Mitra atau Token tidak ditemukan.</span>";
+            }
+        }
+
+        function loadSistemDasar() {
+            // Jika ada info mitra, ambil harga yang sudah mengandung profit
+            if (mitraInfo && mitraInfo.idMitra) {
+                google.script.run.withSuccessHandler(p => {
+                    pricing = p;
+                    hitungTotal();
+                }).getMitraPricing(mitraInfo.idMitra, ID_ORDER);
+            } else {
+                google.script.run.withSuccessHandler(p => {
+                    pricing = p;
+                    hitungTotal();
+                }).getPricingData();
+            }
+
+            google.script.run.withSuccessHandler(w => {
+                dbWilayah = w;
+                const provSelect = document.getElementById('provinsi');
+                if (dbWilayah && provSelect) {
+                    provSelect.innerHTML = '<option value="">-- Pilih Provinsi --</option>';
+                    Object.keys(dbWilayah).sort().forEach(p => {
+                        let o = document.createElement('option');
+                        o.value = p;
+                        o.innerText = p;
+                        provSelect.appendChild(o);
+                    });
+                }
+            }).getDatabaseWilayah();
+        }
+
+        function goMitraStep(step) {
+            if (step === 2) {
+                const nama = document.getElementById('cust-nama').value.trim();
+                const wa = document.getElementById('cust-wa').value.trim();
+                const alamat = document.getElementById('cust-alamat').value.trim();
+                const prov = document.getElementById('provinsi').value;
+                const kab = document.getElementById('kabupaten').value;
+                const kec = document.getElementById('kecamatan').value;
+                if (!nama || !wa || !alamat || !prov || !kab || !kec) {
+                    return alert("Lengkapi dulu data penerima dan wilayah pada Step 1.");
+                }
+            }
+            if (step === 3) {
+                if (!cartItems.length) return alert("Tambahkan produk ke keranjang dulu.");
+                if (!tarifOngkir || Number(tarifOngkir) <= 0) return alert("Hitung ongkir dulu sebelum lanjut ke pembayaran.");
+            }
+            [1,2,3].forEach(s => {
+                const el = document.getElementById('mitra-step-' + s);
+                if (el) el.classList.toggle('active', s === step);
+            });
+            const indicator = document.getElementById('mitra-step-indicator');
+            if (indicator) {
+                const dots = indicator.querySelectorAll('.dot');
+                dots.forEach((d, idx) => d.classList.toggle('active', (idx + 1) <= step));
+            }
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function onProvinsiChange() {
+            const prov = document.getElementById('provinsi').value;
+            const kabSelect = document.getElementById('kabupaten');
+            const kecSelect = document.getElementById('kecamatan');
+
+            kabSelect.innerHTML = '<option value="">-- Pilih Kota/Kab --</option>';
+            kecSelect.innerHTML = '<option value="">-- Pilih Kecamatan --</option>';
+            kecSelect.disabled = true;
+
+            if (prov && dbWilayah[prov]) {
+                kabSelect.disabled = false;
+                Object.keys(dbWilayah[prov]).sort().forEach(k => {
+                    let o = document.createElement('option');
+                    o.value = k;
+                    o.innerText = k;
+                    kabSelect.appendChild(o);
+                });
+            } else {
+                kabSelect.disabled = true;
+            }
+            resetOngkir();
+        }
+
+        function onKabupatenChange() {
+            const prov = document.getElementById('provinsi').value;
+            const kab = document.getElementById('kabupaten').value;
+            const kecSelect = document.getElementById('kecamatan');
+
+            kecSelect.innerHTML = '<option value="">-- Pilih Kecamatan --</option>';
+
+            if (prov && kab && dbWilayah[prov][kab]) {
+                kecSelect.disabled = false;
+                dbWilayah[prov][kab].sort().forEach(k => {
+                    let o = document.createElement('option');
+                    o.value = k;
+                    o.innerText = k;
+                    kecSelect.appendChild(o);
+                });
+            } else {
+                kecSelect.disabled = true;
+            }
+            resetOngkir();
+        }
+
+        function resetOngkir() { tarifOngkir = 0; document.getElementById('ongkir-display').innerText = "0"; hitungTotal(); }
+
+        function cekOngkir() {
+            const prov = document.getElementById('provinsi').value;
+            const kab = document.getElementById('kabupaten').value;
+            const kec = document.getElementById('kecamatan').value;
+            if (!prov || !kab || !kec) return alert("Lengkapi pilihan Provinsi, Kota/Kabupaten & Kecamatan!");
+
+            // FIX: Gunakan TOTAL Quantity dari Keranjang (Request GAS 4 Point 1)
+            let totalQty = cartItems.reduce((sum, item) => sum + item.qty, 0);
+
+            // Jika keranjang kosong, gunakan qty di input (untuk simulasi)
+            if (totalQty === 0) {
+                totalQty = parseInt(document.getElementById('qty').value) || 1;
+            }
+
+            document.getElementById('ongkir-display').innerText = "...";
+            showLoading('Menghitung Ongkir...');
+            google.script.run.withSuccessHandler(res => {
+                hideLoading();
+                tarifOngkir = res || 0;
+                document.getElementById('ongkir-display').innerText = tarifOngkir.toLocaleString('id-ID');
+                hitungTotal();
+            }).withFailureHandler(err => {
+                hideLoading();
+                alert("Gagal menghitung ongkir: " + err);
+            }).getOngkir(prov, kab, kec, totalQty);
+        }
+
+        function hitungTotal() {
+            if (!pricing || !designInfo) return;
+            const kain = document.getElementById('kain').value;
+            const size = document.getElementById('size').value;
+            const lengan = document.getElementById('lengan').value;
+            const qty = parseInt(document.getElementById('qty').value) || 1;
+
+            let kodeKaos = ("Kaos_" + kain + "_" + size + "_" + lengan).toUpperCase();
+            let hargaKaos = pricing.kaos[kodeKaos] || 0;
+
+            let hargaSablon = 0;
+            let kodeMSP = (designInfo.kodeSablon || "").toUpperCase();
+            if (kodeMSP.startsWith("MSP-")) {
+                let parts = kodeMSP.split("-").slice(1);
+                let sablonDict = pricing.sablonSatuan || {};
+                parts.forEach(p => {
+                    let match = p.match(/([A-Z]+)\[(.*?)\]/);
+                    if (match) {
+                        let areas = match[2].split(",");
+                        areas.forEach(area => {
+                            let a = area.trim().toUpperCase();
+                            hargaSablon += (sablonDict[a] || 0);
+                        });
+                    }
+                });
+            }
+
+            // CATATAN: hargaKaos sudah mengandung profit mitra jika diakses lewat link mitra
+            let subtotalItem = (hargaKaos + hargaSablon) * qty;
+            document.getElementById('item-subtotal-display').innerText = subtotalItem.toLocaleString('id-ID');
+
+            let totalProdukKeranjang = cartItems.reduce((sum, item) => sum + item.subtotal, 0);
+            document.getElementById('total-display').innerText = (totalProdukKeranjang + tarifOngkir).toLocaleString('id-ID');
+        }
+
+        function tambahKeKeranjang() {
+            if (!pricing || !designInfo) return;
+            const kain = document.getElementById('kain').value;
+            const size = document.getElementById('size').value;
+            const lengan = document.getElementById('lengan').value;
+            const qty = parseInt(document.getElementById('qty').value) || 1;
+
+            let kodeKaos = ("Kaos_" + kain + "_" + size + "_" + lengan).toUpperCase();
+            let hargaKaos = pricing.kaos[kodeKaos] || 0;
+            let hargaSablon = 0;
+            let kodeMSP = (designInfo.kodeSablon || "").toUpperCase();
+            if (kodeMSP.startsWith("MSP-")) {
+                let parts = kodeMSP.split("-").slice(1);
+                let sablonDict = pricing.sablonSatuan || {};
+                parts.forEach(p => {
+                    let match = p.match(/([A-Z]+)\[(.*?)\]/);
+                    if (match) {
+                        let areas = match[2].split(",");
+                        areas.forEach(area => {
+                            let a = area.trim().toUpperCase();
+                            hargaSablon += (sablonDict[a] || 0);
+                        });
+                    }
+                });
+            }
+            // FIX: Jangan tambah profitPerPcs lagi karena di GAS4_Studio sudah digabung ke hargaKaos
+            let subtotal = (hargaKaos + hargaSablon) * qty;
+
+            cartItems.push({
+                kain: kain,
+                size: size,
+                lengan: lengan,
+                qty: qty,
+                hargaSatuan: hargaKaos + hargaSablon,
+                subtotal: subtotal,
+                sablonText: designInfo.kodeSablon
+            });
+
+            renderKeranjang();
+            hitungTotal();
+            resetOngkir();
+        }
+
+        function hapusItem(index) {
+            cartItems.splice(index, 1);
+            renderKeranjang();
+            hitungTotal();
+            resetOngkir();
+        }
+
+        function renderKeranjang() {
+            const listDiv = document.getElementById('cart-items-list');
+            const reviewMini = document.getElementById('review-mini-cart');
+            listDiv.innerHTML = "";
+            if (cartItems.length === 0) {
+                listDiv.innerHTML = '<div style="text-align:center; color:var(--text-light); font-size:12px; padding:10px; border:1px dashed #cbd5e1; border-radius:8px;">Keranjang Kosong</div>';
+                if (reviewMini) reviewMini.innerText = 'Belum ada item.';
+                return;
+            }
+            if (reviewMini) {
+                reviewMini.innerHTML = cartItems.map(item => `${item.qty}x ${item.kain} ${item.size} / ${item.lengan}`).join('<br>');
+            }
+
+            cartItems.forEach((item, index) => {
+                listDiv.innerHTML += `
+                    <div style="display:flex; justify-content:space-between; align-items:center; background:#f8fafc; padding:12px; border-radius:10px; margin-bottom:8px; border:1px solid #e2e8f0; font-size:13px;">
+                        <div>
+                            <strong>${item.qty}x</strong> ${item.size} - ${item.lengan}<br>
+                            <small style="color:var(--text-light);">@Rp${item.hargaSatuan.toLocaleString('id-ID')}</small>
+                        </div>
+                        <div style="text-align:right;">
+                            <strong>Rp${item.subtotal.toLocaleString('id-ID')}</strong><br>
+                            <span onclick="hapusItem(${index})" style="color:var(--danger); cursor:pointer; font-size:11px; font-weight:bold;"><i class="fa-solid fa-trash"></i> Hapus</span>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        async function submitOrderMitra() {
+            if (cartItems.length === 0) return alert("Keranjang masih kosong!");
+            const btn = document.getElementById('btn-submit');
+            const fileBukti = document.getElementById('bukti').files[0];
+
+            const wa = document.getElementById('cust-wa').value;
+            const alamat = document.getElementById('cust-alamat').value;
+            const nama = document.getElementById('cust-nama').value;
+
+            if (!nama || !wa || !alamat || !fileBukti || tarifOngkir === 0) {
+                return alert("Lengkapi data penerima (Nama, WA, Alamat), bukti bayar, dan cek ongkir!");
+            }
+
+            // ADDED: WhatsApp Validation (Request GAS 4 Point 2)
+            if (wa.length < 11) {
+                btn.disabled = false;
+                btn.innerText = "KONFIRMASI PESANAN";
+                hideLoading();
+                return alert("Nomor WhatsApp minimal 11 digit!");
+            }
+
+            btn.disabled = true;
+            btn.innerText = "Mengirim...";
+            showLoading('Memproses Pesanan...');
+
+            const getBase64 = (file) => new Promise((resolve, reject) => {
+                const reader = new FileReader(); reader.readAsDataURL(file);
+                reader.onload = () => resolve({ base64: reader.result.split(',')[1], mime: reader.result.split(';')[0].split(':')[1] });
+                reader.onerror = e => reject(e);
+            });
+
+            try {
+                const buktiData = await getBase64(fileBukti);
+
+                let totalQty = cartItems.reduce((sum, item) => sum + item.qty, 0);
+                let totalProfit = cartItems.reduce((sum, item) => sum + item.subtotal, 0); // Ini total profit + harga pusat
+
+                // Kalkulasi Detail untuk Database
+                let subtotalCustomer = cartItems.reduce((sum, item) => sum + item.subtotal, 0);
+
+                // Ambil profit dari data pricing yang di-load tadi
+                let pPerPcs = (pricing && pricing.profitPerPcs) ? pricing.profitPerPcs : 0;
+                let profitMitraTotal = cartItems.reduce((sum, item) => sum + (pPerPcs * item.qty), 0);
+                let subtotalMasprinto = subtotalCustomer - profitMitraTotal;
+
+                let payload = {
+                    sessionToken: SESSION_TOKEN,
+                    idMitra: mitraInfo.idMitra,
+                    idOrderAsli: ID_ORDER || "",
+                    namaToko: mitraInfo.namaToko,
+                    subtotalMasprinto: subtotalMasprinto,
+                    profitMitraTotal: profitMitraTotal,
+                    grandTotalCustomer: subtotalCustomer + tarifOngkir,
+
+                    custNama: document.getElementById('cust-nama').value,
+                    custWA: document.getElementById('cust-wa').value,
+                    custAlamat: document.getElementById('cust-alamat').value,
+
+                    nama: document.getElementById('cust-nama').value,
+                    wa: document.getElementById('cust-wa').value,
+                    email: mitraInfo.email,
+                    refId: ID_ORDER || "",
+                    idDesain: ID_ORDER || "",
+                    folderUrl: designInfo.folderUrl || (designInfo.folderId ? ("https://drive.google.com/drive/folders/" + designInfo.folderId) : ""),
+                    ongkir: tarifOngkir,
+                    metodeBayar: "Transfer Bank",
+                    instruksi: "ORDER VIA TOKO: " + mitraInfo.namaToko + " | Customer: " + document.getElementById('cust-nama').value,
+                    alamat: `[MITRA ORDER]\nDROPSHIP DARI: ${mitraInfo.namaToko} (${mitraInfo.wa})\nKE: ${document.getElementById('cust-nama').value} (${document.getElementById('cust-wa').value})\nALAMAT: ${document.getElementById('cust-alamat').value}, ${document.getElementById('kecamatan').value}, ${document.getElementById('kabupaten').value}, ${document.getElementById('provinsi').value}, ${document.getElementById('kodepos').value}`,
+                    provinsi: document.getElementById('provinsi').value,
+                    kabupaten: document.getElementById('kabupaten').value,
+                    kecamatan: document.getElementById('kecamatan').value,
+                    kodepos: document.getElementById('kodepos').value,
+                    kurir: "JNT",
+                    buktiBase64: buktiData.base64,
+                    buktiMimeType: buktiData.mime,
+                    cart: cartItems.map(item => ({
+                        kain: item.kain,
+                        size: item.size,
+                        lengan: item.lengan,
+                        warna: document.getElementById('warna').value,
+                        qty: item.qty,
+                        sablonText: item.sablonText,
+                        sablonAreas: []
+                    }))
+                };
+
+                google.script.run.withSuccessHandler(res => {
+                    hideLoading();
+                    if (res.status === "Sukses") {
+                        document.getElementById('main-container').innerHTML =
+                            '<div style="text-align:center; padding:50px 20px;">' +
+                            '<div style="font-size:60px; color:var(--success); margin-bottom:20px;"><i class="fa-solid fa-circle-check"></i></div>' +
+                            '<h2>Pesanan Berhasil Diterima!</h2>' +
+                            '<p style="color:var(--text-light); margin-bottom:30px;">Terima kasih telah berbelanja. Pesanan Anda akan segera kami proses setelah verifikasi pembayaran.</p>' +
+                            '<div style="background:#f1f5f9; padding:20px; border-radius:12px; margin-bottom:20px;">' +
+                            '<span style="display:block; font-size:12px; color:var(--text-light);">Nomor Pesanan:</span>' +
+                            '<strong style="font-size:24px;">' + res.invoice + '</strong>' +
+                            '</div>' +
+                            '<a href="' + BASE_URL + '?page=tracker&track=' + res.invoice + '" target="_top" style="text-decoration:none;">' +
+                            '<button style="background:var(--primary); border:none;">LACAK PESANAN SAYA</button>' +
+                            '</a>' +
+                            '</div>';
+                    } else {
+                        alert("Gagal: " + res.message);
+                        btn.disabled = false;
+                        btn.innerText = "PROSES PESANAN CUSTOMER";
+                    }
+                }).processMitraOrder(payload);
+
+            } catch (e) {
+                alert("Kesalahan file: " + e);
+                btn.disabled = false;
+                hideLoading();
+            }
+        }
+    </script>
+</body>
+
+</html>

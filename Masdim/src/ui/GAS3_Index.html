@@ -1,0 +1,707 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <base target="_top">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pendaftaran Mitra Masprinto</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+
+    <?!= include('ui/Global_Style'); ?>
+</head>
+
+<body>
+
+    <div class="container" id="main-container">
+
+        <div id="system-loading">
+            <div class="spinner"></div>
+            <h3 style="margin:0; font-size: 18px; color: var(--text);" id="loading-title">Loading ...</h3>
+            <p id="loading-desc" style="font-size: 13px; color: var(--text-light); margin-top: 10px; font-weight: 500;">
+                Mohon tunggu sebentar...</p>
+        </div>
+
+        <h1>Pendaftaran Mitra Masprinto</h1>
+
+        <div id="landing-mode" style="display: none; animation: fadeIn 0.5s ease;">
+             <div style="text-align: center; padding: 20px 0 40px 0;">
+                 <div style="font-size: 60px; color: var(--primary); margin-bottom: 20px;">
+                     <i class="fa-solid fa-handshake-angle"></i>
+                 </div>
+                 <h2 style="margin-bottom: 10px;">Selamat Datang, Partner!</h2>
+                 <p style="color: var(--text-light); margin-bottom: 30px;">Silakan pilih jalur pendaftaran desain Anda di bawah ini:</p>
+                 
+                 <div style="display: grid; grid-template-columns: 1fr; gap: 20px;">
+                     <button type="button" onclick="pilihMode('daftar')" style="padding: 25px; height: auto; text-align: left; background: white; border: 2px solid #e2e8f0; border-radius: 20px; cursor: pointer; transition: 0.3s; display: flex; align-items: center; gap: 20px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);">
+                         <div style="background: #eff6ff; width: 60px; height: 60px; border-radius: 15px; display: flex; align-items: center; justify-content: center; font-size: 24px; color: var(--primary); flex-shrink: 0;">
+                             <i class="fa-solid fa-user-plus"></i>
+                         </div>
+                         <div style="flex: 1;">
+                             <h4 style="margin: 0; font-size: 16px;">Daftar Mitra Baru</h4>
+                             <p style="margin: 5px 0 0 0; font-size: 13px; color: var(--text-light); font-weight: normal;">Saya belum pernah mendaftar di Masprinto.</p>
+                         </div>
+                         <i class="fa-solid fa-chevron-right" style="color: #cbd5e1;"></i>
+                     </button>
+                     
+                     <button type="button" onclick="pilihMode('login')" style="padding: 25px; height: auto; text-align: left; background: white; border: 2px solid #e2e8f0; border-radius: 20px; cursor: pointer; transition: 0.3s; display: flex; align-items: center; gap: 20px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);">
+                         <div style="background: #ecfdf5; width: 60px; height: 60px; border-radius: 15px; display: flex; align-items: center; justify-content: center; font-size: 24px; color: #10b981; flex-shrink: 0;">
+                             <i class="fa-solid fa-right-to-bracket"></i>
+                         </div>
+                         <div style="flex: 1;">
+                             <h4 style="margin: 0; font-size: 16px;">Login Mitra Lama</h4>
+                             <p style="margin: 5px 0 0 0; font-size: 13px; color: var(--text-light); font-weight: normal;">Gunakan data profil & rekening yang sudah ada.</p>
+                         </div>
+                         <i class="fa-solid fa-chevron-right" style="color: #cbd5e1;"></i>
+                     </button>
+                 </div>
+             </div>
+        </div>
+
+        <div id="registration-content" style="display: none;">
+            <div class="progress-wrapper">
+                <div class="progress-line"></div>
+                <div class="progress-line-fill" id="progress-fill" style="width: 0%;"></div>
+                <div class="progress-bar">
+                    <div class="dot active">1<span class="dot-label">Identitas</span></div>
+                    <div class="dot">2<span class="dot-label">Spesifikasi</span></div>
+                    <div class="dot">3<span class="dot-label">Pencairan</span></div>
+                </div>
+            </div>
+
+        <form id="mitraForm">
+
+            <div class="step active" id="step1">
+                <h2><i class="fa-solid fa-user"></i> 1. Informasi Mitra & Brand</h2>
+                <div class="info-box info-red">
+                    <i class="fa-solid fa-triangle-exclamation"></i> <strong>PENTING:</strong> Pastikan Email aktif dan
+                    benar untuk pengiriman laporan dashboard.
+                </div>
+                <div class="form-group"><label>Nama Lengkap / Nama Brand *</label>
+                    <input type="text" id="namaMitra" placeholder="Contoh: MSP Store">
+                    <small style="color:var(--text-light); font-size:11px;">Nama brand/toko yang akan muncul di toko
+                        online Anda.</small>
+                </div>
+                <div class="form-group">
+                    <label>Nomor WhatsApp Aktif *</label>
+                    <input type="number" id="waMitra" placeholder="Contoh: 628123456789">
+                    <small style="color: #ef4444; font-size: 11px; margin-top: 4px; display: block;">*Wajib menggunakan
+                        awalan 628 (Contoh: 6281...)</small>
+                </div>
+                <div class="form-group"><label>Email Mitra *</label>
+                    <input type="email" id="emailMitra" placeholder="Contoh: mitra@domain.com">
+                    <small style="color:var(--text-light); font-size:11px;">Digunakan untuk pengiriman token dashboard &
+                        laporan bulanan.</small>
+                </div>
+                <div class="btn-nav"><button type="button" onclick="nextStep(2)">Lanjut Spesifikasi Produk
+                        &raquo;</button></div>
+            </div>
+
+            <div class="step" id="step2">
+                <h2 style="color: #6366f1;"><i class="fa-solid fa-box"></i> 2. Spesifikasi Produk Toko</h2>
+
+                <div class="success-box" id="customizer-preview-box">
+                    <div class="title"><i class="fa-solid fa-circle-check"></i> Desain Terhubung</div>
+                    <div class="desc">Aset file asli & mockup Anda telah diamankan di brankas Drive kami.</div>
+                    <a id="btn-lihat-drive" href="#" target="_blank"><i class="fa-solid fa-folder-open"></i> Buka Folder
+                        Desain</a>
+                </div>
+
+                <div class="blue-card">
+                    <div class="sub">Estimasi per Pcs (Berdasarkan Size L Pendek):</div>
+                    <div class="row"><span>Area Sablon:</span> <strong id="card-sablon">-</strong></div>
+                    <div class="row"><span>Modal (Kain + Sablon):</span> <strong id="card-modal">Rp 0</strong></div>
+                    <div class="row" style="color: #a7f3d0;"><span>Profit Anda:</span> <strong id="card-profit">+ Rp
+                            0</strong></div>
+
+                    <div class="price-main">
+                        <div style="font-size: 13px; font-weight: normal; margin-bottom: 5px;">Harga Jual di Etalase
+                            Toko (Size S-XL):</div>
+                        <span id="card-harga-normal">Rp 0</span> <span
+                            style="font-size: 16px; font-weight: normal;">/pcs</span>
+                    </div>
+                    <div
+                        style="font-size: 13px; opacity: 0.9; margin-top: 8px; border-top: 1px dashed rgba(255,255,255,0.3); padding-top: 8px; display: flex; justify-content: space-between;">
+                        <span>Harga Size XXL:</span> <strong id="card-harga-xxl">Rp 0</strong>
+                    </div>
+                </div>
+
+                <div class="flex-row">
+                    <div class="form-group flex-1">
+                        <label>Cotton Combed</label>
+                        <select id="kainMitra" onchange="updateSimulasi()">
+                            <option value="30s">30s</option>
+                            <option value="24s">24s</option>
+                            <option value="20s">20s</option>
+                        </select>
+                    </div>
+                    <div class="form-group flex-1">
+                        <label>Warna Kaos</label>
+                        <select id="warnaMitra" onchange="toggleWarnaPO()">
+                            <option value="Hitam">Hitam</option>
+                            <option value="Putih">Putih</option>
+                            <option value="Navy">Navy</option>
+                            <option value="Lainnya">Lainnya...</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group" id="box-warna-po"
+                    style="display: none; background: #f8fafc; padding: 12px; border: 1px dashed var(--border); border-radius: 8px;">
+                    <label>Tulis Request Warna Custom:</label>
+                    <input type="text" id="warnaPO" placeholder="Contoh: Maroon, Hijau Botol, dsb.">
+                </div>
+
+                <div class="sablon-pintar">
+                    <div class="title"><i class="fa-solid fa-bolt"></i> Kode Sablon Pintar</div>
+                    <div class="box" id="box-kode-pintar">Memuat data desain...</div>
+                    <div style="font-size: 12px; color: #6b7280; margin-top: 8px;">Terdeteksi: <strong
+                            id="txt-terdeteksi" style="color: #4338ca;">-</strong></div>
+                </div>
+
+                <div class="form-group"
+                    style="background: white; border: 2px solid #cbd5e1; padding: 15px; border-radius: 8px;">
+                    <label style="color: #0f172a; font-size: 15px;">Tentukan Profit per Kaos (Rp) *</label>
+                    <input type="number" id="profitMitra" placeholder="Contoh: 20000" oninput="updateSimulasi()"
+                        style="font-size: 16px; font-weight: bold; color: #2563eb;">
+                    <small style="color:#64748b; font-size:11px; margin-top:5px; display:block;">Ini adalah keuntungan
+                        bersih Anda dari setiap 1 pcs kaos yang terjual.</small>
+                </div>
+
+                <label class="sla-container">
+                    <input type="checkbox" id="checkSLA">
+                    <span>Saya menyetujui seluruh <strong>Syarat & Ketentuan (SLA) Masprinto</strong>, termasuk
+                        bertanggung jawab atas orisinalitas desain produk yang saya jual.</span>
+                </label>
+
+                <div class="btn-nav">
+                    <button type="button" class="btn-secondary" onclick="nextStep(1)">Kembali</button>
+                    <button type="button" onclick="nextStep(3)">Lanjut Pencairan &raquo;</button>
+                </div>
+            </div>
+
+            <div class="step" id="step3">
+                <h2><i class="fa-solid fa-building-columns"></i> 3. Data Pencairan & Alamat</h2>
+                <div class="info-box info-blue">Profit Anda akan ditransfer ke rekening ini secara otomatis.</div>
+                <div class="form-group">
+                    <label>Nama Bank / E-Wallet *</label>
+                    <select id="bankMitra">
+                        <option value="">-- Pilih Bank --</option>
+                        <option value="BCA">BCA</option>
+                        <option value="Mandiri">Mandiri</option>
+                        <option value="BRI">BRI</option>
+                        <option value="BNI">BNI</option>
+                        <option value="BSI">BSI</option>
+                        <option value="Seabank">Seabank</option>
+                        <option value="Jago">Bank Jago</option>
+                        <option value="Dana">DANA</option>
+                        <option value="Gopay">GoPay</option>
+                    </select>
+                </div>
+                <div class="flex-row">
+                    <div class="form-group flex-1">
+                        <label>Nomor Rekening *</label>
+                        <input type="number" id="rekeningMitra" placeholder="Contoh: 1234567890">
+                        <small style="color:var(--text-light); font-size:11px;">Pastikan nomor rekening benar.</small>
+                    </div>
+                    <div class="form-group flex-1">
+                        <label>Atas Nama *</label>
+                        <input type="text" id="atasNamaMitra" placeholder="Contoh: Budi Santoso">
+                        <small style="color:var(--text-light); font-size:11px;">Nama pemilik rekening sesuai buku
+                            tabungan.</small>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Alamat Lengkap Toko (Jalan/Gang/No Rumah) *</label>
+                    <textarea id="alamatMitra" rows="2"
+                        placeholder="Contoh: Jl. Diponegoro No. 45, RT 02 RW 05"></textarea>
+                    <small style="color:var(--text-light); font-size:11px;">Tulis detail alamat fisik/toko Anda.</small>
+                </div>
+
+                <div class="form-group">
+                    <label>Provinsi:</label>
+                    <select id="provinsi" onchange="onProvinsiChange()" required>
+                        <option value="">-- Pilih Provinsi --</option>
+                    </select>
+                </div>
+
+                <div class="flex-row">
+                    <div class="form-group flex-1">
+                        <label>Kota / Kabupaten:</label>
+                        <select id="kabupaten" onchange="onKabupatenChange()" required disabled>
+                            <option value="">-- Pilih Kota/Kab --</option>
+                        </select>
+                    </div>
+                    <div class="form-group flex-1">
+                        <label>Kecamatan:</label>
+                        <select id="kecamatan" required disabled>
+                            <option value="">-- Pilih Kecamatan --</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Kode POS:</label>
+                    <input type="number" id="kodepos" placeholder="Contoh: 60123">
+                </div>
+
+                <div class="info-box info-yellow" style="font-size: 11px; margin-top: 10px;">
+                    <i class="fa-solid fa-truck"></i> Alamat ini akan digunakan sebagai alamat pengirim (Return Address)
+                    di label resi otomatis Anda.
+                </div>
+                <div class="btn-nav">
+                    <button type="button" class="btn-secondary" id="btn-back-step-3" onclick="nextStep(2)">Kembali</button>
+                    <button type="button" onclick="submitMitra()" style="background: var(--success);">DAFTAR MENJADI
+                        MITRA</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+    <div id="server-data" data-id-order="<?= idOrder ?>" data-base-url="<?= baseUrl ?>"
+        data-token="<?= (typeof token !== 'undefined' ? token : '') ?>"
+        data-session-token="<?= sessionToken ?>"
+        data-access-pin="<?= (typeof accessPin !== 'undefined' ? accessPin : '') ?>"
+        data-mode="<?= (typeof mode !== 'undefined' ? mode : '') ?>" style="display:none;"></div>
+
+    <script>
+        const serverData = document.getElementById('server-data').dataset;
+        const currentIdOrder = serverData.idOrder || "";
+        const BASE_URL = serverData.baseUrl || "";
+        const SESSION_TOKEN = serverData.sessionToken || "";
+        const ACCESS_PIN = serverData.accessPin || "";
+        const TOKEN = serverData.token || "";
+
+        let dataStudio = { folderId: "", kodeSablon: "" };
+        let pricingData = {};
+        let dbWilayah = null;
+        let activeMitra = null;
+
+        // Cek mode dari URL (register = langsung ke form, skip landing)
+        const APP_MODE = serverData.mode || "";
+
+        window.onload = function () {
+            document.getElementById('system-loading').style.display = 'flex';
+            document.getElementById('loading-desc').innerText = 'Memuat sistem pendaftaran...';
+
+            // 1. Cek Login (Token Magic Link dari URL)
+            if (TOKEN) {
+                google.script.run.withSuccessHandler(function(res) {
+                    if (res) {
+                        activeMitra = res;
+                        applyMitraData(res);
+                        // Jika URL tidak membawa id desain tapi mitra punya idOrder sebelumnya, gunakan itu
+                        if (!currentIdOrder && res.idOrder && res.idOrder.toString().trim() !== "") {
+                            window._effectiveIdOrder = res.idOrder.toString().trim();
+                        } else {
+                            window._effectiveIdOrder = currentIdOrder;
+                        }
+                        loadCoreData(true); // true = skip landing
+                    } else {
+                        window._effectiveIdOrder = currentIdOrder;
+                        loadCoreData(false);
+                    }
+                }).validateMitraAuth(TOKEN);
+            } else if (APP_MODE === 'register') {
+                // Datang dari email pendaftaran → langsung ke form Step 1
+                window._effectiveIdOrder = currentIdOrder;
+                loadCoreData(true);
+            } else {
+                window._effectiveIdOrder = currentIdOrder;
+                loadCoreData(false);
+            }
+        };
+
+        function loadCoreData(skipLanding) {
+            // 2. Tarik Data Harga dari Spreadsheet Master
+            google.script.run.withSuccessHandler(function (prices) {
+                pricingData = prices;
+
+                // 3. Tarik Data Wilayah
+                google.script.run.withSuccessHandler(function (w) {
+                    dbWilayah = w;
+                    const provSelect = document.getElementById('provinsi');
+                    if (dbWilayah && provSelect) {
+                        provSelect.innerHTML = '<option value="">-- Pilih Provinsi --</option>';
+                        Object.keys(dbWilayah).sort().forEach(p => {
+                            let o = document.createElement('option');
+                            o.value = p; o.innerText = p;
+                            provSelect.appendChild(o);
+                        });
+                    }
+
+                    // 4. Tarik Data Studio
+                    // Gunakan effectiveIdOrder (bisa dari URL atau dari data mitra yang sudah terdaftar)
+                    const effectiveId = (window._effectiveIdOrder || currentIdOrder || "").toString().trim();
+                    if (effectiveId !== "") {
+                        document.getElementById('loading-title').innerText = 'Loading ...';
+                        google.script.run.withSuccessHandler(function (data) {
+                            if (data) {
+                                dataStudio = data;
+                                document.getElementById('customizer-preview-box').style.display = 'block';
+                                document.getElementById('btn-lihat-drive').href = "https://drive.google.com/drive/folders/" + data.folderId;
+                                // Kode sablon dari GAS1 (Kolom C: safeOrderCode), fallback ke 'Custom'
+                                let sablonText = (data.kodeSablon && data.kodeSablon.trim() !== "") ? data.kodeSablon.trim() : "Custom";
+                                document.getElementById('card-sablon').innerText = sablonText;
+                                document.getElementById('box-kode-pintar').innerText = sablonText;
+                                document.getElementById('txt-terdeteksi').innerText = `[Area Terdeteksi: ${sablonText}]`;
+                            } else {
+                                // FALLBACK: ID ada tapi tidak ditemukan di database
+                                document.getElementById('box-kode-pintar').innerText = "Custom / Manual";
+                                document.getElementById('txt-terdeteksi').innerText = "[Desain Belum Terdaftar di Studio]";
+                                document.getElementById('customizer-preview-box').style.display = 'none';
+                            }
+                            updateSimulasi();
+                            
+                            document.getElementById('system-loading').style.display = 'none';
+                            if (!skipLanding) {
+                                document.getElementById('landing-mode').style.display = 'block';
+                            } else if (activeMitra) {
+                                document.getElementById('registration-content').style.display = 'block';
+                                nextStep(2);
+                            } else {
+                                document.getElementById('registration-content').style.display = 'block';
+                                nextStep(1);
+                            }
+                        }).withFailureHandler(function (err) {
+                            document.getElementById('box-kode-pintar').innerText = "Custom / Manual";
+                            document.getElementById('txt-terdeteksi').innerText = "[Koneksi Studio Gagal]";
+                            document.getElementById('customizer-preview-box').style.display = 'none';
+                            document.getElementById('system-loading').style.display = 'none';
+                            if (!skipLanding) { document.getElementById('landing-mode').style.display = 'block'; }
+                            else { document.getElementById('registration-content').style.display = 'block'; nextStep(activeMitra ? 2 : 1); }
+                        }).getDataFromStudio(effectiveId);
+                    } else {
+                        // Tidak ada ID desain → mode manual (mitra akses langsung tanpa link Studio)
+                        document.getElementById('box-kode-pintar').innerText = "Custom / Manual";
+                        document.getElementById('txt-terdeteksi').innerText = activeMitra
+                            ? "[Login Mitra - Pilih desain di Dashboard]"
+                            : "[Belum Ada Desain Terhubung]";
+                        document.getElementById('customizer-preview-box').style.display = 'none';
+                        updateSimulasi();
+                        
+                        document.getElementById('system-loading').style.display = 'none';
+                        if (!skipLanding) {
+                            document.getElementById('landing-mode').style.display = 'block';
+                        } else if (activeMitra) {
+                            document.getElementById('registration-content').style.display = 'block';
+                            nextStep(2);
+                        } else {
+                            document.getElementById('registration-content').style.display = 'block';
+                            nextStep(1);
+                        }
+                    }
+                }).getDatabaseWilayah();
+
+            }).withFailureHandler(function (err) {
+                alert("Gagal menarik data harga: " + err);
+                document.getElementById('system-loading').style.display = 'none';
+            }).getPricingData();
+        }
+
+        function pilihMode(mode) {
+            document.getElementById('landing-mode').style.display = 'none';
+            document.getElementById('registration-content').style.display = 'block';
+            if (mode === 'daftar') {
+                nextStep(1);
+            } else {
+                openLoginModal();
+            }
+        }
+
+        function applyMitraData(data) {
+            if (!data) return;
+            document.getElementById('namaMitra').value = data.namaToko || "";
+            document.getElementById('waMitra').value = data.wa || "";
+            document.getElementById('emailMitra').value = data.email || "";
+            
+            // Lock fields
+            document.getElementById('namaMitra').readOnly = true;
+            document.getElementById('waMitra').readOnly = true;
+            document.getElementById('emailMitra').readOnly = true;
+            
+            // Sembunyikan tombol navigasi yang tidak perlu jika sudah login
+            document.getElementById('btn-back-step-3').style.display = 'none';
+
+            // Pre-fill Step 3 (Pencairan)
+            document.getElementById('bankMitra').value = data.bank || "";
+            document.getElementById('rekeningMitra').value = data.rekening || "";
+            document.getElementById('atasNamaMitra').value = data.atasNama || "";
+            document.getElementById('alamatMitra').value = data.alamat || "";
+        }
+
+        function logoutMitra() {
+            if (confirm("Anda yakin ingin keluar?")) {
+                window.location.href = BASE_URL + "?page=mitra&id=" + currentIdOrder + "&pin=" + ACCESS_PIN;
+            }
+        }
+
+        function openLoginModal() {
+            document.getElementById('modal-login').style.display = 'flex';
+        }
+
+        function closeModal(id) {
+            document.getElementById(id).style.display = 'none';
+            // Jika membatalkan login dari landing, kembali ke landing
+            if (!activeMitra && document.getElementById('registration-content').style.display === 'block' && document.querySelectorAll('.step.active').length === 0) {
+                 document.getElementById('registration-content').style.display = 'none';
+                 document.getElementById('landing-mode').style.display = 'block';
+            }
+        }
+
+        function requestLoginMagicLink() {
+            let iden = document.getElementById('login-identifier').value.trim();
+            if (!iden) return alert("Masukkan Email atau ID Mitra!");
+            
+            document.getElementById('btn-do-login').innerText = "MENGIRIM...";
+            document.getElementById('btn-do-login').disabled = true;
+
+            google.script.run.withSuccessHandler(function(res) {
+                alert(res.message);
+                closeModal('modal-login');
+                document.getElementById('btn-do-login').innerText = "KIRIM LINK";
+                document.getElementById('btn-do-login').disabled = false;
+            }).sendMitraLoginLinkAuth(iden, currentIdOrder, ACCESS_PIN);
+        }
+
+        function onProvinsiChange() {
+            const prov = document.getElementById('provinsi').value;
+            const kabSelect = document.getElementById('kabupaten');
+            const kecSelect = document.getElementById('kecamatan');
+            kabSelect.innerHTML = '<option value="">-- Pilih Kota/Kab --</option>';
+            kecSelect.innerHTML = '<option value="">-- Pilih Kecamatan --</option>';
+            kecSelect.disabled = true;
+            if (prov && dbWilayah[prov]) {
+                kabSelect.disabled = false;
+                Object.keys(dbWilayah[prov]).sort().forEach(k => {
+                    let o = document.createElement('option');
+                    o.value = k; o.innerText = k;
+                    kabSelect.appendChild(o);
+                });
+            } else {
+                kabSelect.disabled = true;
+            }
+        }
+
+        function onKabupatenChange() {
+            const prov = document.getElementById('provinsi').value;
+            const kab = document.getElementById('kabupaten').value;
+            const kecSelect = document.getElementById('kecamatan');
+            kecSelect.innerHTML = '<option value="">-- Pilih Kecamatan --</option>';
+            if (prov && kab && dbWilayah[prov][kab]) {
+                kecSelect.disabled = false;
+                dbWilayah[prov][kab].sort().forEach(k => {
+                    let o = document.createElement('option');
+                    o.value = k; o.innerText = k;
+                    kecSelect.appendChild(o);
+                });
+            } else {
+                kecSelect.disabled = true;
+            }
+        }
+
+        function toggleWarnaPO() {
+            const val = document.getElementById('warnaMitra').value;
+            document.getElementById('box-warna-po').style.display = (val === "Lainnya") ? "block" : "none";
+        }
+
+        // KALKULATOR HARGA SINKRON (BULLETPROOF SPREADSHEET)
+        function updateSimulasi() {
+            let kain = document.getElementById('kainMitra').value; 
+            let keyNormal = ("Kaos_" + kain + "_L_Pendek").toUpperCase();
+            let keyXXL = ("Kaos_" + kain + "_XXL_Pendek").toUpperCase();
+            let modalKainNormal = 0;
+            let modalKainXXL = 0;
+            if (pricingData && pricingData.kaos) {
+                modalKainNormal = pricingData.kaos[keyNormal] || 0;
+                modalKainXXL = pricingData.kaos[keyXXL] || (modalKainNormal + 10000);
+            }
+            let biayaSablon = 0;
+            if (dataStudio && dataStudio.kodeSablon) {
+                let sablonUpper = dataStudio.kodeSablon.toUpperCase();
+                if (pricingData && pricingData.sablonSatuan) {
+                    let countA3 = (sablonUpper.match(/A3/g) || []).length;
+                    let countA4 = (sablonUpper.match(/A4/g) || []).length;
+                    let countLogo = (sablonUpper.match(/LOGO/g) || []).length;
+                    let countNeck = (sablonUpper.match(/NECKLABEL/g) || []).length;
+                    let countLengan = (sablonUpper.match(/LENGAN/g) || []).length;
+                    biayaSablon += countA3 * (pricingData.sablonSatuan['A3'] || 0);
+                    biayaSablon += countA4 * (pricingData.sablonSatuan['A4'] || 0);
+                    biayaSablon += countLogo * (pricingData.sablonSatuan['LOGO'] || 0);
+                    biayaSablon += countNeck * (pricingData.sablonSatuan['NECKLABEL'] || 0);
+                    biayaSablon += countLengan * (pricingData.sablonSatuan['LENGAN'] || 0);
+                }
+            }
+            let profitStr = document.getElementById('profitMitra').value;
+            let profit = parseInt(profitStr) || 0;
+            let totalModalNormal = modalKainNormal + biayaSablon;
+            let hargaJualNormal = totalModalNormal + profit;
+            let hargaJualXXL = (modalKainXXL + biayaSablon) + profit;
+            document.getElementById('card-modal').innerText = "Rp " + totalModalNormal.toLocaleString('id-ID');
+            document.getElementById('card-profit').innerText = "+ Rp " + profit.toLocaleString('id-ID');
+            document.getElementById('card-harga-normal').innerText = "Rp " + hargaJualNormal.toLocaleString('id-ID');
+            document.getElementById('card-harga-xxl').innerText = "Rp " + hargaJualXXL.toLocaleString('id-ID');
+        }
+
+        function nextStep(n) {
+            try {
+                if (n === 2) {
+                    let nama = document.getElementById('namaMitra').value.trim();
+                    let wa = document.getElementById('waMitra').value.trim();
+                    let email = document.getElementById('emailMitra').value.trim();
+                    if (!nama || !wa || !email) return alert("Harap lengkapi Profil Mitra terlebih dahulu!");
+                    if (wa.length < 11) return alert("Nomor WhatsApp minimal 11 digit!");
+                    if (!wa.startsWith("628")) return alert("Nomor WhatsApp harus diawali dengan angka 628 (Contoh: 62812...)");
+                    if (!email.includes("@")) return alert("Format Email tidak valid (harus mengandung '@')!");
+                }
+                if (n === 3) {
+                    let profit = parseInt(document.getElementById('profitMitra').value);
+                    if (isNaN(profit) || profit < 1000) return alert("Harap masukkan target profit minimal Rp 1.000");
+                    if (!document.getElementById('checkSLA').checked) return alert("Anda harus mencentang persetujuan SLA.");
+                }
+
+                let steps = document.querySelectorAll('.step');
+                for (let i = 0; i < steps.length; i++) steps[i].classList.remove('active');
+                document.getElementById('step' + n).classList.add('active');
+
+                let dots = document.querySelectorAll('.dot');
+                for (let i = 0; i < dots.length; i++) {
+                    if (i < n) dots[i].classList.add('active');
+                    else dots[i].classList.remove('active');
+                }
+                document.getElementById('progress-fill').style.width = (((n - 1) / 2) * 100) + '%';
+                window.scrollTo(0, 0);
+            } catch (e) { alert("Kesalahan: " + e.message); }
+        }
+
+        function submitMitra() {
+            try {
+                let bank = document.getElementById('bankMitra').value;
+                let rek = document.getElementById('rekeningMitra').value.trim();
+                let an = document.getElementById('atasNamaMitra').value.trim();
+                let alamatRaw = document.getElementById('alamatMitra').value.trim();
+                let prov = document.getElementById('provinsi').value;
+                let kab = document.getElementById('kabupaten').value;
+                let kec = document.getElementById('kecamatan').value;
+                let pos = document.getElementById('kodepos').value;
+
+                if (bank === "" || rek === "" || an === "" || alamatRaw === "" || !prov || !kab || !kec) {
+                    return alert("Harap lengkapi Data Pencairan, Alamat Lengkap, Provinsi, Kota dan Kecamatan!");
+                }
+
+                let alamatFinal = `${alamatRaw}, Kec. ${kec}, Kab. ${kab}, Prov. ${prov} ${pos ? '(' + pos + ')' : ''}`;
+                let warnaPilihan = document.getElementById('warnaMitra').value;
+                let warnaFinal = (warnaPilihan === "Lainnya") ? document.getElementById('warnaPO').value.trim() : warnaPilihan;
+
+                document.getElementById('system-loading').style.display = 'flex';
+                document.getElementById('loading-title').innerText = 'Mendaftarkan...';
+
+                const payload = {
+                    sessionToken: SESSION_TOKEN,
+                    nama: document.getElementById('namaMitra').value,
+                    wa: document.getElementById('waMitra').value,
+                    email: document.getElementById('emailMitra').value,
+                    kain: document.getElementById('kainMitra').value,
+                    warnaFix: warnaFinal,
+                    profit: document.getElementById('profitMitra').value,
+                    bank: bank, rekening: rek, atasNama: an, alamat: alamatFinal,
+                    idOrderAsli: currentIdOrder, accessPin: ACCESS_PIN,
+                    folderId: dataStudio.folderId, kodeSablon: dataStudio.kodeSablon,
+                    isLoggedIn: (activeMitra ? true : false)
+                };
+
+                google.script.run
+                    .withSuccessHandler(function (response) { 
+                         if (response.status === "Error" && response.message.includes("sudah terdaftar")) {
+                              if (confirm(response.message + "\n\nIngin login menggunakan Magic Link?")) {
+                                   openLoginModal();
+                                   document.getElementById('login-identifier').value = payload.email;
+                                   document.getElementById('system-loading').style.display = 'none';
+                              } else {
+                                   document.getElementById('system-loading').style.display = 'none';
+                              }
+                         } else if (response.status === "Error") {
+                              alert(response.message);
+                              document.getElementById('system-loading').style.display = 'none';
+                         } else {
+                              tampilkanSukses(response); 
+                         }
+                    })
+                    .withFailureHandler(function (err) {
+                        alert("Gagal: " + err); document.getElementById('system-loading').style.display = 'none';
+                    }).registerMitraBaru(payload);
+
+            } catch (e) {
+                alert("Error: " + e.message); document.getElementById('system-loading').style.display = 'none';
+            }
+        }
+        function tampilkanSukses(res) {
+            const waAdmin = "6281231619457";
+            const currentUrl = BASE_URL;
+            const linkOrderPembeli = currentUrl + "?page=shop&mid=" + res.idMitra;
+            const linkDashboard = currentUrl + "?page=dashboard&token=" + res.token;
+
+            const pesanRaw =
+                `Halo Admin! Pendaftaran Mitra Berhasil.\n\n` +
+                `*Data Mitra:*\n` +
+                `Nama Toko: *${res.nama}*\n` +
+                `ID Mitra: *${res.idMitra}*\n` +
+                `________________________\n\n` +
+                `*LINK DASHBOARD MITRA:*\n` +
+                `${linkDashboard}`;
+
+            const waLink = "https://wa.me/" + waAdmin + "?text=" + encodeURIComponent(pesanRaw);
+            
+            // Redirect ke WA otomatis
+            window.top.location.href = waLink;
+
+            // Tampilkan pesan sukses di background
+            document.getElementById('main-container').innerHTML = `
+                <div style='text-align:center; padding: 60px 20px;'>
+                    <div style='font-size:70px; color: #10b981; margin-bottom: 20px;'>
+                        <i class="fa-solid fa-circle-check"></i>
+                    </div>
+                    <h2 style='color: var(--text); font-size: 24px; margin-bottom: 10px;'>Pendaftaran Berhasil!</h2>
+                    <p style='color: var(--text-light); font-size: 15px; margin-bottom: 30px;'>
+                        Membuka WhatsApp Admin... Jika tidak terbuka otomatis, klik tombol di bawah.
+                    </p>
+                    
+                    <button onclick="window.top.location.href='${waLink}'" class="btn-masprinto" style="width:100%; padding: 18px; font-size: 16px; background-color: #25D366; border:none;">
+                        KIRIM DATA KE WHATSAPP <i class="fa-brands fa-whatsapp" style="margin-left:8px;"></i>
+                    </button>
+
+                    <div style="margin-top:20px; padding-top:20px; border-top:1px solid #eee;">
+                         <p style="font-size:12px; color:var(--text-light); margin-bottom:10px;">Atau masuk langsung ke dashboard:</p>
+                         <button onclick="window.top.location.href='${linkDashboard}'" style="background:none; border:none; color:var(--primary); font-weight:bold; cursor:pointer;">MASUK DASHBOARD &raquo;</button>
+                    </div>
+                </div>
+            `;
+        }
+    </script>
+    <!-- MODAL LOGIN MITRA -->
+    <div id="modal-login" class="modal">
+        <div class="modal-content">
+            <h3 style="margin-top:0;"><i class="fa-solid fa-right-to-bracket"></i> Login Mitra</h3>
+            <p style="font-size:13px; color:var(--text-light); margin-bottom:20px;">Masukkan Email atau ID Mitra Anda. Link login akan dikirim ke email terdaftar.</p>
+            
+            <div class="form-group">
+                <label>Email / ID Mitra</label>
+                <input type="text" id="login-identifier" placeholder="mitra@email.com / MTR-XXXX">
+            </div>
+            
+            <div style="display:flex; gap:10px; margin-top:25px;">
+                <button type="button" class="btn-secondary" onclick="closeModal('modal-login')" style="flex:1;">Batal</button>
+                <button type="button" id="btn-do-login" onclick="requestLoginMagicLink()" style="flex:1; background:var(--primary); color:white; border:none; border-radius:10px; font-weight:bold; cursor:pointer;">KIRIM LINK</button>
+            </div>
+        </div>
+    </div>
+
+    <style>
+        .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); align-items: center; justify-content: center; }
+        .modal-content { background: white; padding: 25px; border-radius: 20px; width: 90%; max-width: 400px; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1); }
+    </style>
+</body>
+
+</html>
